@@ -18,13 +18,6 @@ public:
 	{
 	}
 
-	ssde(const ssde &from) :
-		ip(from.ip),
-		buffer(from.buffer)
-	{
-	}
-
-
 	virtual bool dec() = 0;                 // Decode instruction pointed by IP.
 
 	void next()                             // Advance to the next instruction.
