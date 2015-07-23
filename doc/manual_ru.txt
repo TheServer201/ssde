@@ -65,6 +65,7 @@ Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.txt
         AES, SHA, VMX
         MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, FMA3
         прочие мелкие расширения (CPUID, ADX, RDSEED, RDRAND и т.д.)
+        префиксы MVEX(2), VEX(3) и частично EVEX(4)
 
   ssde_x64 также поддерживает расширения, описаные выше. Кроме того,
         присутствует поддержка REX префикса, расширения Mod R/M с
@@ -161,12 +162,12 @@ Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.txt
 4 Добавление поддержки новой архитектуры
 
   Для добавления поддержки новой архитектуры, нужно создать новый класс,
-  который будет окончательным (final), иметь название "ssde_АРХИТЕКТУРА",
-  происходить от "ssde" и использовать конструкторы ssde::ssde. Прототипы
-  всех классов должны быть описаны в ssde.hpp. Пример:
+  иметь название "ssde_АРХИТЕКТУРА", происходить от "ssde" и использовать
+  конструкторы ssde::ssde. Прототип класса должен быть описан в .hpp файле
+  с таким же названием, как и у класса. Например:
 
-    /* ssde.hpp */
-      class ssde_arm final : public ssde
+    /* ssde_arm.hpp */
+      class ssde_arm : public ssde
       {
       public:
         using ssde::ssde;

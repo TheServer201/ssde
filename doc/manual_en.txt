@@ -63,6 +63,7 @@ Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.txt
         AES, SHA, VMX
         MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, FMA3
         other minor extensions (CPUID, ADX, RDSEED, RDRAND etc)
+        prefixes MVEX(2), VEX(3) and a bit of EVEX(4)
 
   ssde_x64 supports extensions listed above just aswell, other than that
         it supports REX prefix, Mod R/M extensions using REX, imm extension
@@ -143,13 +144,13 @@ Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.txt
 
 4 Adding support for new architecture
 
-  To add support for a new architecture, you have to create a class
-  which is final, it should be called "ssde_ARCHITECTURE", inherit from
-  "ssde" and use ssde::ssde constructors. Prototypes of all classes must
-  be declared in ssde.hpp. e.g.:
+  To add support for a new architecture, you have to create a class, it
+  should be called "ssde_ARCHITECTURE", inherit from "ssde" and use
+  ssde::ssde constructors. Prototype of the class must be declared in
+  in .hpp files equvalent to its class name. e.g.:
 
-    /* ssde.hpp */
-      class ssde_arm final : public ssde
+    /* ssde_arm.hpp */
+      class ssde_arm : public ssde
       {
       public:
         using ssde::ssde;
