@@ -3,12 +3,13 @@
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #pragma once
+
 #include "ssde.hpp"
 
 /*
 * SSDE disassembler for X86-64 architecture.
 */
-class ssde_x64 final : public ssde
+class ssde_x64 : public ssde
 {
 public:
 	/*
