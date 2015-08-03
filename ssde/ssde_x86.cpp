@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+
 /*
 * Major amounts of information this code was based on ware taken from
 * the "Intel(R) 64 and IA-32 Architectures Software Developer's Manual".
@@ -74,7 +75,7 @@ static const uint16_t op_table[256] =
 	  rm  ,  rm  ,  rm  ,  rm  ,  rm  ,  rm  ,  rm  ,  rm  , /* 33x */
 	  r8  ,  r8  ,  r8  ,  r8  ,  i8  ,  i8  ,  i8  ,  i8  , /* 34x */
 	  r32 ,  r32,i32|i16,  r8  , none , none , none , none , /* 35x */
-	 error, none , error, error, none , none , error, error, /* 36x */
+	 none , none , error, error, none , none , error, error, /* 36x */
 	 none , none , none , none , none , none ,  rm  ,  rm  , /* 37x */
 };
 
@@ -347,7 +348,7 @@ void ssde_x86::decode_prefixes()
 		* if the word is longer than that, decoder will fail.
 		*/
 	{
-		uint8_t prefix = buffer[ip + length];
+		uint8_t prefix = (uint8_t)buffer[ip + length];
 
 		/* 1st group */
 		if (prefix == p_lock  ||
@@ -397,9 +398,9 @@ void ssde_x86::decode_prefixes()
 /* -- read opcode bytes or decode them from VEX ---------------------------- */
 void ssde_x86::decode_opcode()
 {
-	if ((static_cast<uint8_t>(buffer[ip + length]) == 0xc4 ||
-	     static_cast<uint8_t>(buffer[ip + length]) == 0xc5 ||
-	     static_cast<uint8_t>(buffer[ip + length]) == 0x62) &&
+	if (((uint8_t)buffer[ip + length] == 0xc4 ||
+	     (uint8_t)buffer[ip + length] == 0xc5 ||
+	     (uint8_t)buffer[ip + length] == 0x62) &&
 	    (buffer[ip + length+1] & 0xc0) == 0xc0)
 		/* looks like we've found a VEX prefix */
 	{
@@ -429,10 +430,10 @@ void ssde_x86::decode_opcode()
 			uint8_t vex_3 = buffer[ip + length++];
 
 			vex_decode_mm(vex_1 & 0x03);
-			
+
 
 			/* determine destination register from vvvv */
-			vex_reg = (~vex_2 >> 3) & 0x0f | (vex_3 & 0x80 ? 0x10 : 0);
+			vex_reg = ((~vex_2 >> 3) & 0x0f) | (vex_3 & 0x80 ? 0x10 : 0);
 
 			vex_decode_pp(vex_2 & 0x03);
 
@@ -442,7 +443,7 @@ void ssde_x86::decode_opcode()
 			vex_sae  = vex_3 & 0x10 ? true : false;
 
 			vex_opmask = vex_3 & 0x07;
-			
+
 			if (vex_rc)
 				/* rounding control, implies vector is 512 bits wide */
 			{
