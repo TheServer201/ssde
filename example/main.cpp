@@ -50,7 +50,7 @@ int main(int argc, const char *argv[])
 		for (int i = 0; i < dis.length; ++i)
 			/* output instruction's bytes */
 		{
-			cout << setfill('0') << setw(2) << hex << (static_cast<int>(bc[dis.ip + i]) & 0xff);
+			cout << setfill('0') << setw(2) << hex << ((int)bc[dis.ip + i] & 0xff);
 		}
 
 		if (dis.has_rel)

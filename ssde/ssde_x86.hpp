@@ -6,6 +6,7 @@
 
 #include "ssde.hpp"
 
+
 /*
 * SSDE disassembler for X86 architecture.
 */
@@ -75,7 +76,7 @@ public:
 	uint8_t group2 = 0;                     // Opcode prefix in 2nd group, 0 if none. 2nd group includes segment prefixes and/or branch hints.
 	uint8_t group3 = 0;                     // Opcode prefix in 3rd group, 0 if none. 3rd group includes operand-size override prefix (p_66)
 	uint8_t group4 = 0;                     // Opcode prefix in 4th group, 0 if none. 4th group includes address-size override prefix (p_67)
-	
+
 	bool    has_vex    = false;             // Has VEX prefix.
 	bool    vex_zero   = false;             // Should zero or merge?; z field.
 	uint8_t vex_size   = 0;                 // Size of VEX prefix (usually 2 or 3 bytes).
@@ -84,7 +85,7 @@ public:
 	/* VEX.W, VEX.R, VEX.X, VEX.B have no effect in 32 bit mode */
 	uint8_t vex_l      = 0;                 // VEX L field.
 	uint8_t vex_round  = rnd_off;           // Rounding mode.
-	
+
 	union
 	{
 		bool vex_sae = false;               // Suppress exceptions.

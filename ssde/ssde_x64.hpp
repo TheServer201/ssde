@@ -6,6 +6,7 @@
 
 #include "ssde.hpp"
 
+
 /*
 * SSDE disassembler for X86-64 architecture.
 */
@@ -98,7 +99,7 @@ public:
 	};
 
 	bool    has_rex = false;                // Has REX prefix.
-	
+
 	bool    has_vex    = false;             // Has VEX prefix.
 	bool    vex_zero   = false;             // Should zero or merge?; z field.
 	uint8_t vex_size   = 0;                 // Size of VEX prefix (usually 2 or 3 bytes).
@@ -107,7 +108,7 @@ public:
 	bool    vex_rr     = false;             // VEX R' field.
 	uint8_t vex_l      = 0;                 // VEX L field.
 	uint8_t vex_round  = rnd_off;           // Rounding mode.
-	
+
 	union
 	{
 		bool vex_sae = false;               // Suppress exceptions.
