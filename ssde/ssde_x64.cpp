@@ -240,51 +240,10 @@ bool ssde_x64::dec()
 			if (has_disp)
 				/* if instruction has displacement value, read it */
 			{
-				disp = 0;
-
-				for (int i = 0; i < disp_size; i++)
-					disp |= buffer[ip + length++] << i*8;
-
-				if (disp & (1 << (disp_size*8 - 1)))
-					/* disp is signed, extend the sign if needed */
-				{
-					switch (disp_size)
-					{
-					case 1:
-						disp |= 0xffffff00;
-						break;
-
-					case 2:
-						disp |= 0xffff0000;
-						break;
-
-					default:
-						break;
-					}
-				}
+				read_disp();
 			}
 
-			/* perform Mod R/M and/or SIB REX extensions */
-			if (has_sib)
-			{
-				modrm_reg |= rex_r ? 0x08 : 0;
-
-				sib_index |= rex_x ? 0x08 : 0;
-				sib_base  |= rex_b ? 0x08 : 0;
-			}
-			else
-			{
-				if (flags & ::ox)
-					/* Mod extended opcodes are extended differently */
-				{
-					modrm_reg |= rex_b ? 0x08 : 0;
-				}
-				else
-				{
-					modrm_reg |= rex_r ? 0x08 : 0;
-					modrm_rm  |= rex_b ? 0x08 : 0;
-				}
-			}
+			rex_extend_modrm_sib();
 		}
 		else if (group1 == p_lock)
 			/* LOCK prefix only makes sense for Mod M */
@@ -293,8 +252,8 @@ bool ssde_x64::dec()
 			error_lock = true;
 		}
 
-		/* decode moffs, imm or rel */
-		decode_imm();
+		/* read moffs, imm or rel */
+		read_imm();
 
 
 		if (length > 15)
@@ -731,8 +690,36 @@ void ssde_x64::decode_sib()
 	sib_base  = sib_byte      & 0x07;
 }
 
+/* -- read displacement ---------------------------------------------------- */
+void ssde_x64::read_disp()
+{
+	disp = 0;
+
+	for (int i = 0; i < disp_size; i++)
+		disp |= buffer[ip + length++] << i*8;
+
+
+	if (disp & (1 << (disp_size*8 - 1)))
+		/* disp is signed, extend the sign if needed */
+	{
+		switch (disp_size)
+		{
+		case 1:
+			disp |= 0xffffff00;
+			break;
+
+		case 2:
+			disp |= 0xffff0000;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 /* -- decodes a moffs, imm or rel operand ---------------------------------- */
-void ssde_x64::decode_imm()
+void ssde_x64::read_imm()
 {
 	if (flags & ::am)
 		/* address mode instructions behave a little differently */
@@ -823,6 +810,31 @@ void ssde_x64::decode_imm()
 		abs = ip + length + rel;
 
 		has_rel = true;
+	}
+}
+
+/* -- perform Mod R/M and/or SIB REX extensions ---------------------------- */
+void ssde_x64::rex_extend_modrm_sib()
+{
+	if (has_sib)
+	{
+		modrm_reg |= rex_r ? 0x08 : 0;
+
+		sib_index |= rex_x ? 0x08 : 0;
+		sib_base  |= rex_b ? 0x08 : 0;
+	}
+	else
+	{
+		if (flags & ::ox)
+			/* Mod extended opcodes are extended differently */
+		{
+			modrm_reg |= rex_b ? 0x08 : 0;
+		}
+		else
+		{
+			modrm_reg |= rex_r ? 0x08 : 0;
+			modrm_rm  |= rex_b ? 0x08 : 0;
+		}
 	}
 }
 

@@ -237,28 +237,7 @@ bool ssde_x86::dec()
 			if (has_disp)
 				/* if instruction has displacement value, read it */
 			{
-				disp = 0;
-
-				for (int i = 0; i < disp_size; i++)
-					disp |= buffer[ip + length++] << i*8;
-
-				if (disp & (1 << (disp_size*8 - 1)))
-					/* disp is signed, extend the sign if needed */
-				{
-					switch (disp_size)
-					{
-					case 1:
-						disp |= 0xffffff00;
-						break;
-
-					case 2:
-						disp |= 0xffff0000;
-						break;
-
-					default:
-						break;
-					}
-				}
+				read_disp();
 			}
 		}
 		else if (group1 == p_lock)
@@ -268,8 +247,8 @@ bool ssde_x86::dec()
 			error_lock = true;
 		}
 
-		/* decode moffs, imm or rel */
-		decode_imm();
+		/* read moffs, imm or rel */
+		read_imm();
 
 
 		if (length > 15)
@@ -640,8 +619,36 @@ void ssde_x86::decode_sib()
 	sib_base  = sib_byte      & 0x07;
 }
 
+/* -- read displacement ---------------------------------------------------- */
+void ssde_x86::read_disp()
+{
+	disp = 0;
+
+	for (int i = 0; i < disp_size; i++)
+		disp |= buffer[ip + length++] << i*8;
+
+
+	if (disp & (1 << (disp_size*8 - 1)))
+		/* disp is signed, extend the sign if needed */
+	{
+		switch (disp_size)
+		{
+		case 1:
+			disp |= 0xffffff00;
+			break;
+
+		case 2:
+			disp |= 0xffff0000;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 /* -- decodes a moffs, imm or rel operand ---------------------------------- */
-void ssde_x86::decode_imm()
+void ssde_x86::read_imm()
 {
 	if (flags & ::am)
 		/* address mode instructions behave a little differently */

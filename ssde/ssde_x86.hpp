@@ -63,7 +63,9 @@ private:
 	void decode_opcode();
 	void decode_modrm();
 	void decode_sib();
-	void decode_imm();
+	
+	void read_disp();
+	void read_imm();
 
 	void vex_decode_pp(uint8_t pp);
 	void vex_decode_mm(uint8_t mm);
