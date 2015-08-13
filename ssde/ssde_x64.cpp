@@ -206,6 +206,7 @@ static const uint16_t op_table_3a[256] =
 };
 
 
+/* -- decode instruction pointed by IP ------------------------------------- */
 bool ssde_x64::dec()
 {
 	if (ip >= buffer.length())

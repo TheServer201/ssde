@@ -44,12 +44,12 @@ public:
 	*/
 	enum : uint8_t
 	{
-		rnd_rne = 0x00,                     //
-		rnd_rd  = 0x01,                     //
-		rnd_ru  = 0x02,                     //
-		rnd_rz  = 0x03,                     //
+		rnd_rne = 0x00,                     // Round to nearest.
+		rnd_rd  = 0x01,                     // Round down.
+		rnd_ru  = 0x02,                     // Round up.
+		rnd_rz  = 0x03,                     // Truncate.
 
-		rnd_off = (uint8_t)-1               // 
+		rnd_off = (uint8_t)-1               // No rounding implied.
 	};
 
 	using ssde::ssde;
