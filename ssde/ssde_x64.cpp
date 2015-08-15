@@ -220,7 +220,7 @@ bool ssde_x64::dec()
 	if (flags != ::error)
 		/* it's not a bullshit instruction */
 	{
-		if (flags & ::mp && group3 != p_66)
+		if (flags & ::mp && group3 != pr_66)
 			/* this instruction lacks mandatory 66 prefix */
 		{
 			error = true;
@@ -233,20 +233,20 @@ bool ssde_x64::dec()
 			decode_modrm();
 
 			if (has_sib)
-				/* if instruction has a SIB byte, decode it, too */
+				/* instruction has a SIB byte, decode it, too */
 			{
 				decode_sib();
 			}
 
 			if (has_disp)
-				/* if instruction has displacement value, read it */
+				/* instruction has displacement value, read it */
 			{
 				read_disp();
 			}
 
 			rex_extend_modrm_sib();
 		}
-		else if (group1 == p_lock)
+		else if (group1 == pr_lock)
 			/* LOCK prefix only makes sense for Mod M */
 		{
 			error = true;
@@ -318,7 +318,7 @@ void ssde_x64::reset_fields()
 	vex_opmask = 0;
 	vex_rr     = false;
 	vex_l      = 0;
-	vex_round  = rnd_off;
+	vex_round  = rc_off;
 	vex_sae    = false;
 
 
@@ -344,11 +344,11 @@ void ssde_x64::decode_prefixes()
 		uint8_t prefix = (uint8_t)buffer[ip + length];
 
 		/* 1st group */
-		if (prefix == p_lock  ||
-		    prefix == p_repnz ||
-		    prefix == p_repz)
+		if (prefix == pr_lock  ||
+		    prefix == pr_repnz ||
+		    prefix == pr_repz)
 		{
-			if (group1 == p_none)
+			if (group1 == pr_none)
 				group1 = prefix;
 
 			if (has_rex)
@@ -358,12 +358,12 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 2nd group */
-		if (prefix == p_seg_cs || prefix == p_seg_ss ||
-		    prefix == p_seg_ds || prefix == p_seg_es ||
-		    prefix == p_seg_fs || prefix == p_seg_gs
-			/* p_branch_not_taken, p_branch_taken, */)
+		if (prefix == pr_seg_cs || prefix == pr_seg_ss ||
+		    prefix == pr_seg_ds || prefix == pr_seg_es ||
+		    prefix == pr_seg_fs || prefix == pr_seg_gs
+			/* pr_branch_not_taken, pr_branch_taken, */)
 		{
-			if (group2 == p_none)
+			if (group2 == pr_none)
 				group2 = prefix;
 
 			if (has_rex)
@@ -373,9 +373,9 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 3rd group */
-		if (prefix == p_66)
+		if (prefix == pr_66)
 		{
-			if (group3 == p_none)
+			if (group3 == pr_none)
 				group3 = prefix;
 
 			if (has_rex)
@@ -385,9 +385,9 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 4th group */
-		if (prefix == p_67)
+		if (prefix == pr_67)
 		{
-			if (group4 == p_none)
+			if (group4 == pr_none)
 				group4 = prefix;
 
 			if (has_rex)
@@ -626,7 +626,7 @@ void ssde_x64::decode_modrm()
 	switch (modrm_mod)
 	{
 	case 0x00:
-		if (group4 == p_67)
+		if (group4 == pr_67)
 		{
 			if (modrm_rm == 0x06)
 			{
@@ -649,7 +649,7 @@ void ssde_x64::decode_modrm()
 
 	case 0x01:
 		{
-			if (group4 != p_67 && modrm_rm == 0x04)
+			if (group4 != pr_67 && modrm_rm == 0x04)
 				has_sib = true;
 
 			has_disp  = true;
@@ -659,16 +659,16 @@ void ssde_x64::decode_modrm()
 
 	case 0x02:
 		{
-			if (group4 != p_67 && modrm_rm == 0x04)
+			if (group4 != pr_67 && modrm_rm == 0x04)
 				has_sib = true;
 
 			has_disp  = true;
-			disp_size = group4 != p_67 ? 4 : 2;
+			disp_size = group4 != pr_67 ? 4 : 2;
 		}
 		break;
 
 	case 0x03:
-		if (group1 == p_lock)
+		if (group1 == pr_lock)
 			/* LOCK prefix is not allowed to be used with Mod R */
 		{
 			error = true;
@@ -726,14 +726,14 @@ void ssde_x64::read_imm()
 		/* address mode instructions behave a little differently */
 	{
 		has_imm  = true;
-		imm_size = group4 != p_67 ? 8 : 4;
+		imm_size = group4 != pr_67 ? 8 : 4;
 	}
 	else
 	{
 		if (flags & ::i32)
 		{
 			has_imm  = true;
-			imm_size = rex_w && (flags & ::rw) ? 8 : group3 != p_66 ? 4 : 2;
+			imm_size = rex_w && (flags & ::rw) ? 8 : group3 != pr_66 ? 4 : 2;
 		}
 
 		if (flags & ::i16)
@@ -791,7 +791,7 @@ void ssde_x64::read_imm()
 		rel = (uint32_t)imm;
 
 		if (rel & (1 << (rel_size*8 - 1)))
-			/* rel is signed, extend the sign if needed */
+			/* rel is negative, extend the sign */
 		{
 			switch (rel_size)
 			{
@@ -845,15 +845,15 @@ void ssde_x64::vex_decode_pp(uint8_t pp)
 	switch (pp)
 	{
 	case 0x01:
-		group3 = p_66;
+		group3 = pr_66;
 		break;
 
 	case 0x02:
-		group1 = p_repz;
+		group1 = pr_repz;
 		break;
 
 	case 0x03:
-		group1 = p_repnz;
+		group1 = pr_repnz;
 		break;
 
 	default:
