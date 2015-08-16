@@ -737,7 +737,7 @@ void ssde_x86::read_imm()
 			}
 		}
 
-		abs = ip + length + rel;
+		abs = (uint32_t)ip + length + rel;
 
 		has_rel = true;
 	}
