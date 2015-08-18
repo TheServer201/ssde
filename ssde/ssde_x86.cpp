@@ -203,7 +203,6 @@ static const uint16_t op_table_3a[256] =
 };
 
 
-/* -- decode instruction pointed by IP ------------------------------------- */
 bool ssde_x86::dec()
 {
 	if (ip >= buffer.length())
@@ -272,7 +271,7 @@ bool ssde_x86::dec()
 	return true;
 }
 
-/* -- resets fields before new iteration of the instruction decoder -------- */
+/* resets fields before new iteration of the instruction decoder */
 void ssde_x86::reset_fields()
 {
 	length = 0;
@@ -312,7 +311,7 @@ void ssde_x86::reset_fields()
 	flags = ::error;
 }
 
-/* -- decode legacy prefixes the same way CPU does ------------------------- */
+/* decode legacy prefixes the same way CPU does */
 void ssde_x86::decode_prefixes()
 {
 	for (int x = 0; x < 14; ++x, ++length)
@@ -375,7 +374,7 @@ void ssde_x86::decode_prefixes()
 	}
 }
 
-/* -- read opcode bytes or decode them from VEX ---------------------------- */
+/* read opcode bytes or decode them from VEX */
 void ssde_x86::decode_opcode()
 {
 	if (((uint8_t)buffer[ip + length] == 0xc4 ||
@@ -542,7 +541,7 @@ void ssde_x86::decode_opcode()
 	}
 }
 
-/* -- decodes a Mod R/M byte ----------------------------------------------- */
+/* decodes a Mod R/M byte */
 void ssde_x86::decode_modrm()
 {
 	uint8_t modrm_byte = buffer[ip + length++];
@@ -610,7 +609,7 @@ void ssde_x86::decode_modrm()
 	}
 }
 
-/* -- decodes SIB byte ----------------------------------------------------- */
+/* decodes SIB byte */
 void ssde_x86::decode_sib()
 {
 	uint8_t sib_byte = buffer[ip + length++];
@@ -620,7 +619,7 @@ void ssde_x86::decode_sib()
 	sib_base  = sib_byte      & 0x07;
 }
 
-/* -- read displacement ---------------------------------------------------- */
+/* read displacement */
 void ssde_x86::read_disp()
 {
 	disp = 0;
@@ -648,7 +647,7 @@ void ssde_x86::read_disp()
 	}
 }
 
-/* -- decodes a moffs, imm or rel operand ---------------------------------- */
+/* decodes a moffs, imm or rel operand */
 void ssde_x86::read_imm()
 {
 	if (flags & ::am)
@@ -743,7 +742,7 @@ void ssde_x86::read_imm()
 	}
 }
 
-/* -- decode SIMD prefix from pp field of VEX ------------------------------ */
+/* decode SIMD prefix from pp field of VEX */
 void ssde_x86::vex_decode_pp(uint8_t pp)
 {
 	switch (pp)
@@ -765,7 +764,7 @@ void ssde_x86::vex_decode_pp(uint8_t pp)
 	}
 }
 
-/* -- determine opcode bytes from mm field of VEX -------------------------- */
+/* determine opcode bytes from mm field of VEX */
 void ssde_x86::vex_decode_mm(uint8_t mm)
 {
 	switch (mm)
