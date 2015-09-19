@@ -219,7 +219,7 @@ bool ssde_x64::dec()
 	if (flags != ::error)
 		/* it's not a bullshit instruction */
 	{
-		if (flags & ::mp && group3 != pr_66)
+		if (flags & ::mp && group3 != pref::p66)
 			/* this instruction lacks mandatory 66 prefix */
 		{
 			error = true;
@@ -245,7 +245,7 @@ bool ssde_x64::dec()
 
 			rex_extend_modrm_sib();
 		}
-		else if (group1 == pr_lock)
+		else if (group1 == pref::lock)
 			/* LOCK prefix only makes sense for Mod M */
 		{
 			error = true;
@@ -296,10 +296,10 @@ void ssde_x64::reset_fields()
 	has_rel   = false;
 	has_vex   = false;
 
-	group1 = 0;
-	group2 = 0;
-	group3 = 0;
-	group4 = 0;
+	group1 = pref::none;
+	group2 = pref::none;
+	group3 = pref::none;
+	group4 = pref::none;
 
 	opcode1 = 0;
 	opcode2 = 0;
@@ -317,7 +317,7 @@ void ssde_x64::reset_fields()
 	vex_opmask = 0;
 	vex_rr     = false;
 	vex_l      = 0;
-	vex_round  = rc_off;
+	vex_round  = vex_rm::off;
 	vex_sae    = false;
 
 
@@ -340,14 +340,14 @@ void ssde_x64::decode_prefixes()
 		* if the word is longer than that, decoder will fail.
 		*/
 	{
-		uint8_t prefix = (uint8_t)buffer[ip + length];
+		pref prefix = (pref)buffer[ip + length];
 
 		/* 1st group */
-		if (prefix == pr_lock  ||
-		    prefix == pr_repnz ||
-		    prefix == pr_repz)
+		if (prefix == pref::lock  ||
+		    prefix == pref::repnz ||
+		    prefix == pref::repz)
 		{
-			if (group1 == pr_none)
+			if (group1 == pref::none)
 				group1 = prefix;
 
 			if (has_rex)
@@ -357,12 +357,12 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 2nd group */
-		if (prefix == pr_seg_cs || prefix == pr_seg_ss ||
-		    prefix == pr_seg_ds || prefix == pr_seg_es ||
-		    prefix == pr_seg_fs || prefix == pr_seg_gs
-			/* pr_branch_not_taken, pr_branch_taken, */)
+		if (prefix == pref::seg_cs || prefix == pref::seg_ss ||
+		    prefix == pref::seg_ds || prefix == pref::seg_es ||
+		    prefix == pref::seg_fs || prefix == pref::seg_gs
+			/* pref::branch_not_taken, pref::branch_taken, */)
 		{
-			if (group2 == pr_none)
+			if (group2 == pref::none)
 				group2 = prefix;
 
 			if (has_rex)
@@ -372,9 +372,9 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 3rd group */
-		if (prefix == pr_66)
+		if (prefix == pref::p66)
 		{
-			if (group3 == pr_none)
+			if (group3 == pref::none)
 				group3 = prefix;
 
 			if (has_rex)
@@ -384,9 +384,9 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* 4th group */
-		if (prefix == pr_67)
+		if (prefix == pref::p67)
 		{
-			if (group4 == pr_none)
+			if (group4 == pref::none)
 				group4 = prefix;
 
 			if (has_rex)
@@ -396,7 +396,7 @@ void ssde_x64::decode_prefixes()
 		}
 
 		/* REX prefix */
-		if ((prefix & 0xf0) == 0x40)
+		if (((uint8_t)prefix & 0xf0) == 0x40)
 			/*
 			* Unlike all legacy prefixes, if CPU
 			* meets multiple of REX prefixes, it
@@ -407,10 +407,10 @@ void ssde_x64::decode_prefixes()
 		{
 			has_rex = true;
 
-			rex_w = prefix & 0x08 ? true : false;
-			rex_r = prefix & 0x04 ? true : false;
-			rex_x = prefix & 0x02 ? true : false;
-			rex_b = prefix & 0x01 ? true : false;
+			rex_w = (uint8_t)prefix & 0x08 ? true : false;
+			rex_r = (uint8_t)prefix & 0x04 ? true : false;
+			rex_x = (uint8_t)prefix & 0x02 ? true : false;
+			rex_b = (uint8_t)prefix & 0x01 ? true : false;
 
 			continue;
 		}
@@ -429,10 +429,10 @@ void ssde_x64::decode_opcode()
 	{
 		has_vex = true;
 
-		if (group1 != 0 ||
-		    group2 != 0 ||
-		    group3 != 0 ||
-		    group4 != 0)
+		if (group1 != pref::none ||
+		    group2 != pref::none ||
+		    group3 != pref::none ||
+		    group4 != pref::none)
 			/* VEX-encoded instructions are not allowed to be preceeded by legacy prefixes */
 		{
 			error = true;
@@ -483,7 +483,7 @@ void ssde_x64::decode_opcode()
 			if (vex_rc)
 				/* rounding control, implies vector is 512 bits wide */
 			{
-				vex_round = vex_l;
+				vex_round = (vex_rm)vex_l;
 				vex_l     = 0x02;
 			}
 			else if (vex_l == 0x03)
@@ -625,7 +625,7 @@ void ssde_x64::decode_modrm()
 	switch (modrm_mod)
 	{
 	case 0x00:
-		if (group4 == pr_67)
+		if (group4 == pref::p67)
 		{
 			if (modrm_rm == 0x06)
 			{
@@ -648,7 +648,7 @@ void ssde_x64::decode_modrm()
 
 	case 0x01:
 		{
-			if (group4 != pr_67 && modrm_rm == 0x04)
+			if (group4 != pref::p67 && modrm_rm == 0x04)
 				has_sib = true;
 
 			has_disp  = true;
@@ -658,16 +658,16 @@ void ssde_x64::decode_modrm()
 
 	case 0x02:
 		{
-			if (group4 != pr_67 && modrm_rm == 0x04)
+			if (group4 != pref::p67 && modrm_rm == 0x04)
 				has_sib = true;
 
 			has_disp  = true;
-			disp_size = group4 != pr_67 ? 4 : 2;
+			disp_size = group4 != pref::p67 ? 4 : 2;
 		}
 		break;
 
 	case 0x03:
-		if (group1 == pr_lock)
+		if (group1 == pref::lock)
 			/* LOCK prefix is not allowed to be used with Mod R */
 		{
 			error = true;
@@ -725,14 +725,14 @@ void ssde_x64::read_imm()
 		/* address mode instructions behave a little differently */
 	{
 		has_imm  = true;
-		imm_size = group4 != pr_67 ? 8 : 4;
+		imm_size = group4 != pref::p67 ? 8 : 4;
 	}
 	else
 	{
 		if (flags & ::i32)
 		{
 			has_imm  = true;
-			imm_size = rex_w && (flags & ::rw) ? 8 : group3 != pr_66 ? 4 : 2;
+			imm_size = rex_w && (flags & ::rw) ? 8 : group3 != pref::p66 ? 4 : 2;
 		}
 
 		if (flags & ::i16)
@@ -844,15 +844,15 @@ void ssde_x64::vex_decode_pp(uint8_t pp)
 	switch (pp)
 	{
 	case 0x01:
-		group3 = pr_66;
+		group3 = pref::p66;
 		break;
 
 	case 0x02:
-		group1 = pr_repz;
+		group1 = pref::repz;
 		break;
 
 	case 0x03:
-		group1 = pr_repnz;
+		group1 = pref::repnz;
 		break;
 
 	default:

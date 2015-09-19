@@ -16,40 +16,40 @@ public:
 	/*
 	* X86 Prefixes.
 	*/
-	enum : uint8_t
+	enum class pref : uint8_t
 	{
-		pr_none = 0,                        // No prefix.
+		none = 0,                           // No prefix.
 
-		pr_seg_cs = 0x2e,                   // CS segment prefix.
-		pr_seg_ss = 0x36,                   // SS segment prefix.
-		pr_seg_ds = 0x3e,                   // DS segment prefix.
-		pr_seg_es = 0x26,                   // ES segment prefix.
-		pr_seg_fs = 0x64,                   // FS segment prefix.
-		pr_seg_gs = 0x65,                   // GS segment prefix.
-		pr_lock   = 0xf0,                   // LOCK prefix.
-		pr_repnz  = 0xf2,                   // REPNZ prefix.
-		pr_repz   = 0xf3,                   // REPZ prefix.
-		pr_66     = 0x66,                   // Operand size override prefix.
-		pr_67     = 0x67,                   // Address size override prefix.
+		seg_cs = 0x2e,                      // CS segment prefix.
+		seg_ss = 0x36,                      // SS segment prefix.
+		seg_ds = 0x3e,                      // DS segment prefix.
+		seg_es = 0x26,                      // ES segment prefix.
+		seg_fs = 0x64,                      // FS segment prefix.
+		seg_gs = 0x65,                      // GS segment prefix.
+		lock   = 0xf0,                      // LOCK prefix.
+		repnz  = 0xf2,                      // REPNZ prefix.
+		repz   = 0xf3,                      // REPZ prefix.
+		p66    = 0x66,                      // Operand size override prefix.
+		p67    = 0x67,                      // Address size override prefix.
 
-		pr_branch_not_taken = 0x2e,         // Branch not taken hint.
-		pr_branch_taken     = 0x3e,         // Branch taken hint.
+		br_not_taken = 0x2e,                // Branch not taken hint.
+		br_taken     = 0x3e,                // Branch taken hint.
 
-		pr_precision_double = 0xf2,         // Double precision scalar prefix
-		pr_precision_single = 0xf3,         // Single precision scalar prefix
+		fp_double = 0xf2,                   // Double precision scalar.
+		fp_single = 0xf3,                   // Single precision scalar.
 	};
 
 	/*
-	* EVEX rounding modes.
+	* EVEX rounding mode.
 	*/
-	enum : uint8_t
+	enum class vex_rm : uint8_t
 	{
-		rc_ne = 0x00,                       // Round to nearest.
-		rc_d  = 0x01,                       // Round down.
-		rc_u  = 0x02,                       // Round up.
-		rc_z  = 0x03,                       // Truncate.
+		near = 0x00,                        // Round to nearest.
+		down = 0x01,                        // Round down.
+		up   = 0x02,                        // Round up.
+		zero = 0x03,                        // Truncate.
 
-		rc_off = (uint8_t)-1                // No rounding implied.
+		off = (uint8_t)-1                   // No rounding implied.
 	};
 
 	using ssde::ssde;
@@ -74,10 +74,10 @@ public:
 	bool error_lock = false;                // LOCK prefix is not allowed.
 	bool error_novex = false;               // Instruction is only allowed to be VEX encoded.
 
-	uint8_t group1 = 0;                     // Opcode prefix in 1st group, 0 if none. 1st group includes LOCK, REPNZ and REPZ prefixes.
-	uint8_t group2 = 0;                     // Opcode prefix in 2nd group, 0 if none. 2nd group includes segment prefixes and/or branch hints.
-	uint8_t group3 = 0;                     // Opcode prefix in 3rd group, 0 if none. 3rd group includes operand-size override prefix (pr_66)
-	uint8_t group4 = 0;                     // Opcode prefix in 4th group, 0 if none. 4th group includes address-size override prefix (pr_67)
+	pref group1 = pref::none;               // Opcode prefix in 1st group, 0 if none. 1st group includes LOCK, REPNZ and REPZ prefixes.
+	pref group2 = pref::none;               // Opcode prefix in 2nd group, 0 if none. 2nd group includes segment prefixes and/or branch hints.
+	pref group3 = pref::none;               // Opcode prefix in 3rd group, 0 if none. 3rd group includes operand-size override prefix (pr_66)
+	pref group4 = pref::none;               // Opcode prefix in 4th group, 0 if none. 4th group includes address-size override prefix (pr_67)
 
 	bool    has_vex    = false;             // Has VEX prefix.
 	bool    vex_zero   = false;             // Should zero or merge?; z field.
@@ -86,7 +86,7 @@ public:
 	uint8_t vex_opmask = 0;                 // VEX opmask register specifier.
 	/* VEX.W, VEX.R, VEX.X, VEX.B have no effect in 32 bit mode */
 	uint8_t vex_l      = 0;                 // VEX L field.
-	uint8_t vex_round  = rc_off;            // Rounding mode.
+	vex_rm  vex_round  = vex_rm::off;       // Rounding mode.
 
 	union
 	{
