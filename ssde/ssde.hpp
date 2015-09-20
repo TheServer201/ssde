@@ -31,8 +31,8 @@ public:
 	bool error_operand = false;             // Bad operand(s).
 	bool error_length  = false;             // Instruction is too long.
 
-	size_t ip;                              // Instruction pointer. Can be manually overriden.
-	int    length  = 0;                     // Instruction length, in bytes. Can be manually overriden.
+	size_t ip     = 0;                      // Instruction pointer. Can be manually overriden.
+	int    length = 0;                      // Instruction length, in bytes. Can be manually overriden.
 
 protected:
 	const std::string &buffer;
