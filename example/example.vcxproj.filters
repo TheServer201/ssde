@@ -19,6 +19,9 @@
     <ClInclude Include="..\ssde\ssde.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
+    <ClInclude Include="..\ssde\ssde_arm.hpp">
+      <Filter>ssde</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -28,6 +31,9 @@
       <Filter>ssde</Filter>
     </ClCompile>
     <ClCompile Include="..\ssde\ssde_x64.cpp">
+      <Filter>ssde</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ssde\ssde_arm.cpp">
       <Filter>ssde</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,6 +4,8 @@
 * You wish.
 */
 #include "../ssde/ssde_x86.hpp"
+#include "../ssde/ssde_x64.hpp"
+#include "../ssde/ssde_arm.hpp"
 
 #include <iostream>
 #include <string>
@@ -17,7 +19,41 @@ int main(int argc, const char *argv[])
 
 	ios_base::sync_with_stdio(false);
 
+	const string bc("\x01\x20\x40\xe2"
+	                "\x02\x20\x61\xe0"
+	                "\x01\x30\xd1\xe4"
+	                "\x00\x00\x53\xe3"
+	                "\x02\x30\xc1\xe7"
+	                "\xfb\xff\xff\x1a"
+	                "\x1e\xff\x2f\xe1", 4*7);
 
+	for (ssde_arm dis(bc); dis.dec(); dis.next())
+		/*
+		* call ::next() to iterate and ::dec() to
+		* decode and decide whether we have reached
+		* the end of the buffer or not
+		*/
+	{
+		/* output address of the instruction */
+		cout << setfill('0') << setw(8) << hex << dis.pc << ": ";
+
+		for (int i = 0; i < dis.length; ++i)
+			/* output instruction's bytes */
+		{
+			cout << setfill('0') << setw(2) << hex << ((int)bc[dis.pc + i] & 0xff);
+		}
+
+		if (dis.is_branch)
+		{
+			cout << " # -> " << setfill('0') << setw(8) << hex << dis.abs;
+		}
+
+		cout << '\n';
+	}
+
+	return 0;
+
+#if 0
 	const string bc =
 		"\x55"
 		"\x31\xd2"
@@ -63,4 +99,5 @@ int main(int argc, const char *argv[])
 	}
 
 	return 0;
+#endif
 }
