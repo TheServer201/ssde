@@ -123,7 +123,7 @@ public:
 
 	bool     has_rel  = false;              // Has relative address.
 	int      rel_size = 0;                  // Size of relative address, in bytes.
-	int32_t  rel      = 0;                  // Relative address value.
+	int32_t  rel      = 0;                  // Relative (to IP) address value.
 	uint32_t abs      = 0;                  // Absolute address value.
 
 private:
