@@ -18,6 +18,10 @@ Check _example/_ to see how SSDE can be used.
 	|  /  | SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 |
 	| x64 | AVX, AVX2, AVX512, FMA3                |
 	|_____|________________________________________|
+	|     |*WIP*                                   |
+	| ARM | Thumb, Thumb-2                         |
+	|     |                                        |
+	|_____|________________________________________|
 
            List of machines SSDE was tested on
 	 ______________________________________________
