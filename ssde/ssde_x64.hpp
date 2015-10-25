@@ -13,6 +13,11 @@
 class ssde_x64 : public ssde
 {
 public:
+	const const char *cock[1] =
+	{
+		"cock"
+	};
+
 	/*
 	* Legacy X86 prefixes.
 	*/
@@ -81,22 +86,22 @@ public:
 	pref group3 = pref::none;               // Opcode prefix in 3rd group, 0 if none. 3rd group includes operand-size override prefix (pr_66)
 	pref group4 = pref::none;               // Opcode prefix in 4th group, 0 if none. 4th group includes address-size override prefix (pr_67)
 
-	union // W field.
+	union // W: 64-bit operand size override.
 	{
 		bool rex_w = false;
 		bool vex_w;
 	};
-	union // R field.
+	union // R: extension of Mod R/M reg field.
 	{
 		bool rex_r = false;
 		bool vex_r;
 	};
-	union // X field.
+	union // X: extension of SIB index field.
 	{
 		bool rex_x = false;
 		bool vex_x;
 	};
-	union // B field.
+	union // B: extension of Mod R/M rm, SIB base or opcode reg field.
 	{
 		bool rex_b = false;
 		bool vex_b;
@@ -106,11 +111,11 @@ public:
 
 	bool    has_vex    = false;             // Has VEX prefix.
 	bool    vex_zero   = false;             // Should zero or merge?; z field.
-	uint8_t vex_size   = 0;                 // Size of VEX prefix (usually 2 or 3 bytes).
+	uint8_t vex_size   = 0;                 // Size of VEX prefix (usually 2 or 3 bytes, 4 for EVEX).
 	uint8_t vex_reg    = 0;                 // VEX register specifier.
 	uint8_t vex_opmask = 0;                 // VEX opmask register specifier.
-	bool    vex_rr     = false;             // VEX R' field.
-	uint8_t vex_l      = 0;                 // VEX L field.
+	bool    vex_rr     = false;             // VEX R': extension of Mod R/m reg field.
+	uint8_t vex_l      = 0;                 // VEX L: prefix size field.
 	vex_rm  vex_round  = vex_rm::off;       // Rounding mode.
 
 	union

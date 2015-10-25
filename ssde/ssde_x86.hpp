@@ -85,7 +85,7 @@ public:
 	uint8_t vex_reg    = 0;                 // VEX register specifier.
 	uint8_t vex_opmask = 0;                 // VEX opmask register specifier.
 	/* VEX.W, VEX.R, VEX.X, VEX.B have no effect in 32 bit mode */
-	uint8_t vex_l      = 0;                 // VEX L field.
+	uint8_t vex_l      = 0;                 // VEX L: prefix size field.
 	vex_rm  vex_round  = vex_rm::off;       // Rounding mode.
 
 	union
