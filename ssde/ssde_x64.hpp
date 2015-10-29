@@ -13,11 +13,6 @@
 class ssde_x64 : public ssde
 {
 public:
-	const const char *cock[1] =
-	{
-		"cock"
-	};
-
 	/*
 	* Legacy X86 prefixes.
 	*/
@@ -111,11 +106,11 @@ public:
 
 	bool    has_vex    = false;             // Has VEX prefix.
 	bool    vex_zero   = false;             // Should zero or merge?; z field.
-	uint8_t vex_size   = 0;                 // Size of VEX prefix (usually 2 or 3 bytes, 4 for EVEX).
+	uint8_t vex_size   = 0;                 // Size of VEX prefix.
 	uint8_t vex_reg    = 0;                 // VEX register specifier.
 	uint8_t vex_opmask = 0;                 // VEX opmask register specifier.
 	bool    vex_rr     = false;             // VEX R': extension of Mod R/m reg field.
-	uint8_t vex_l      = 0;                 // VEX L: prefix size field.
+	uint8_t vex_l      = 0;                 // VEX L: vector size.
 	vex_rm  vex_round  = vex_rm::off;       // Rounding mode.
 
 	union
@@ -137,7 +132,7 @@ public:
 	bool    has_sib   = false;              // Has SIB byte.
 	uint8_t sib_scale = 0;                  // Index scale factor.
 	uint8_t sib_index = 0;                  // Index register.
-	uint8_t sib_base  = 0;                  // Base register.
+	uint8_t sib_base  = 0;			        // Base register.
 
 	bool    has_disp  = false;              // Has address displacement.
 	int     disp_size = 0;                  // Size of address displacement, in bytes.
