@@ -1,5 +1,5 @@
 /*
-* The SSDE implementation for X64 instruction set.
+* The SSDE implementation for X64 instruction set
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #include "ssde.hpp"
@@ -12,7 +12,7 @@
 
 /*
 * Major amounts of information this code was based on ware taken from
-* the "Intel(R) 64 and IA-32 Architectures Software Developer's Manual".
+* the "Intel(R) 64 and IA-32 Architectures Software Developer's Manual"
 * If You are unfamiliar with the X86 architecture, it's recommended that
 * you read the manual first. The manuals can be obtained @
 *   http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
@@ -338,7 +338,7 @@ void ssde_x64::decode_prefixes()
 		* will ignore any prefix it meets if there was a
 		* prefix from the same group before it. Instruction
 		* decoders can only handle words up to 15 bytes long,
-		* if the word is longer than that, decoder will fail.
+		* if the word is longer than that, decoder will fail
 		*/
 	{
 		pref prefix = (pref)buffer[ip + length];
@@ -403,7 +403,7 @@ void ssde_x64::decode_prefixes()
 			* meets multiple of REX prefixes, it
 			* will only take the last one into
 			* account. REX prefixes before legacy
-			* ones are silently ignored.
+			* ones are silently ignored
 			*/
 		{
 			has_rex = true;
@@ -590,7 +590,7 @@ void ssde_x64::decode_opcode()
 		* consistent flags. Instead of creating a new
 		* flags table for each extended opcode, I decided
 		* to put this little bit of code that is dedicated
-		* to these two exceptional opcodes.
+		* to these two exceptional opcodes
 		*/
 	{
 		switch (buffer[ip + length] >> 3 & 0x07)

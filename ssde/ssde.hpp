@@ -1,5 +1,5 @@
 /*
-* The SSDE header file.
+* The SSDE header file
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #pragma once
@@ -18,21 +18,21 @@ public:
 	{
 	}
 
-	virtual bool dec() = 0;                 // Decode instruction pointed by IP.
+	virtual bool dec() = 0;                 // Decode instruction pointed by IP
 
-	void next()                             // Advance to the next instruction.
+	void next()                             // Advance to the next instruction
 	{
 		ip += length;
 	}
 
 public:
-	bool error         = false;             // Decoding error.
-	bool error_opcode  = false;             // Bad opcode.
-	bool error_operand = false;             // Bad operand(s).
-	bool error_length  = false;             // Instruction is too long.
+	bool error         = false;             // Decoding error
+	bool error_opcode  = false;             // Bad opcode
+	bool error_operand = false;             // Bad operand(s)
+	bool error_length  = false;             // Instruction is too long
 
-	size_t ip     = 0;                      // Instruction pointer. Can be manually overriden.
-	int    length = 0;                      // Instruction length, in bytes. Can be manually overriden.
+	size_t ip     = 0;                      // Instruction pointer. Can be manually overriden
+	int    length = 0;                      // Instruction length, in bytes. Can be manually overriden
 
 protected:
 	const std::string &buffer;

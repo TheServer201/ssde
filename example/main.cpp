@@ -1,7 +1,5 @@
 /*
-* This file is usage demo for SSDE (http://github.com/notnanocat/ssde).
-* This file is not a subject to license, feel free to use it in any way
-* You wish.
+* This file is usage demo for SSDE (http://github.com/notnanocat/ssde)
 */
 #include "../ssde/ssde.hpp"
 #include "../ssde/ssde_x86.hpp"
@@ -45,6 +43,7 @@ int main(int argc, const char *argv[])
 		}
 
 		if (dis.is_branch)
+			/* if this is a branch instruction, print where it points to */
 		{
 			cout << " # -> " << setfill('0') << setw(8) << hex << dis.abs;
 		}

@@ -1,5 +1,5 @@
 /*
-* The SSDE implementation for ARM instruction set.
+* The SSDE implementation for ARM instruction set
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #include "ssde.hpp"

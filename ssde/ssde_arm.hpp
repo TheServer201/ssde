@@ -1,5 +1,5 @@
 /*
-* The SSDE header file for ssde_arm.cpp.
+* The SSDE header file for ssde_arm.cpp
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #pragma once
@@ -14,27 +14,27 @@
 * if PC goes misaligned (with user's intention), upon
 * ::dec() "error_misalign" will be set, but instruction
 * still will be decoded from the address without realigning
-* the PC just fine.
+* the PC just fine
 */
 
 /*
-* SSDE disassembler for ARM architecture.
+* SSDE disassembler for ARM architecture
 */
 class ssde_arm : public ssde
 {
 public:
 	/*
-	* ARM CPU states.
+	* ARM CPU states
 	*/
 	enum class cpu_state
 	{
-		arm    = 0x00,                      // Normal ARM mode.
-		thumb  = 0x01,                      // Thumb (16 bit) mode.
-		thumb2 = 0x02,                      // Thumb 2 (32 bit) mode.
+		arm    = 0x00,                      // Normal ARM mode
+		thumb  = 0x01,                      // Thumb (16 bit) mode
+		thumb2 = 0x02,                      // Thumb 2 (32 bit) mode
 	};
 
 	/*
-	* ARM execution conditions.
+	* ARM execution conditions
 	*/
 	enum class cc : uint8_t
 	{
@@ -66,15 +66,15 @@ private:
 	uint32_t fetch();
 
 public:
-	size_t &pc = ip;                        // ARM's naming of IP.
-	cpu_state state = cpu_state::arm;       // Specifies which state the CPU is in and changes decoder's behaviour.
+	size_t &pc = ip;                        // ARM's naming of IP
+	cpu_state state = cpu_state::arm;       // Specifies which state the CPU is in and changes decoder's behaviour
 
-	bool error_cpu_state = false;           // Unknown CPU state.
-	bool error_misalign  = false;           // PC is not aligned to 4 (or 2) byte boundary.
+	bool error_cpu_state = false;           // Unknown CPU state
+	bool error_misalign  = false;           // PC is not aligned to 4 (or 2) byte boundary
 
 	union
 	{
-		cc condition = (cc)0;               // Instruction's condition required for execution.
+		cc condition = (cc)0;               // Instruction's condition required for execution
 
 		struct
 		{
@@ -87,11 +87,11 @@ public:
 
 	bool     is_branch = false;             // Is this a branch instruction?
 	bool     has_link  = false;             // Does this branch instruction have a link? (for return)
-	int32_t  rel       = 0;                 // Relative (to PC) address value.
-	uint32_t abs       = 0;                 // Absolute address value.
+	int32_t  rel       = 0;                 // Relative (to PC) address value
+	uint32_t abs       = 0;                 // Absolute address value
 
 	bool     is_swi   = false;              // Is this a call to SWI handler?
-	uint32_t swi_data = 0;                  // SWI data, its meaning is up to the OS software is built for.
+	uint32_t swi_data = 0;                  // SWI data, its meaning is up to the OS software is built for
 
 private:
 };
