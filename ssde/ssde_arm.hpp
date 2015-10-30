@@ -74,7 +74,7 @@ public:
 
 	union
 	{
-		uint8_t condition = 0;              // Instruction's condition required for execution.
+		cc condition = (cc)0;               // Instruction's condition required for execution.
 
 		struct
 		{
