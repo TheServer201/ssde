@@ -3,6 +3,7 @@
 * This file is not a subject to license, feel free to use it in any way
 * You wish.
 */
+#include "../ssde/ssde.hpp"
 #include "../ssde/ssde_x86.hpp"
 #include "../ssde/ssde_x64.hpp"
 #include "../ssde/ssde_arm.hpp"

@@ -2,6 +2,7 @@
 * The SSDE implementation for X86 instruction set.
 * Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
+#include "ssde.hpp"
 #include "ssde_x86.hpp"
 
 #include <string>
