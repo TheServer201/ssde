@@ -24,7 +24,7 @@ bool ssde_arm::dec()
 	{
 	case cpu_state::arm:
 		{
-			condition = (bc & 0xf0000000) >> 28;
+			condition = (cc)((bc & 0xf0000000) >> 28);
 
 			if ((bc & 0x0c000000) == 0x00000000)
 				/* data processing / psr transfer */
@@ -136,7 +136,7 @@ void ssde_arm::reset_fields()
 	error_length   = false;
 	error_misalign = false;
 
-	condition = 0;
+	condition = (cc)0;
 
 	is_branch = false;
 	has_link  = false;
