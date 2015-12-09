@@ -16,7 +16,8 @@ int main(int argc, const char *argv[])
 {
 	using namespace std;
 
-	ios_base::sync_with_stdio(false);
+	ios::sync_with_stdio(false);
+
 
 	const string bc("\x01\x20\x40\xe2"
 	                "\x02\x20\x61\xe0"
