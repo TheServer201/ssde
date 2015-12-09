@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <iostream>
+
 
 bool ssde_arm::dec()
 {
@@ -83,7 +85,7 @@ bool ssde_arm::dec()
 					rel |= 0xfc000000;
 				}
 
-				abs = (uint32_t)pc + length + rel;
+				abs = (uint32_t)pc + 4 + rel;
 			}
 			else if ((bc & 0x0ffffff0) == 0x012fff10)
 				/* branch exchange (v4T only) */
@@ -111,6 +113,8 @@ bool ssde_arm::dec()
 				error = true;
 				error_opcode = true;
 			}
+
+			break;
 		}
 
 	default:
@@ -119,6 +123,8 @@ bool ssde_arm::dec()
 			error_cpu_state = true;
 
 			length = 0;
+
+			break;
 		}
 	}
 
