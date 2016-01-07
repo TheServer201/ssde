@@ -113,19 +113,17 @@ bool ssde_arm::dec()
 				error = true;
 				error_opcode = true;
 			}
-
-			break;
 		}
+		break;
 
 	default:
 		{
 			error = true;
 			error_cpu_state = true;
-
+			
 			length = 0;
-
-			break;
 		}
+		break;
 	}
 
 	return true;
@@ -167,9 +165,8 @@ uint32_t ssde_arm::fetch()
 				error_misalign = true;
 
 			length = 4;
-
-			break;
 		}
+		break;
 
 	case cpu_state::thumb:
 		{
@@ -180,9 +177,8 @@ uint32_t ssde_arm::fetch()
 				error_misalign = true;
 
 			length = 2;
-
-			break;
 		}
+		break;
 
 	default:
 		break;
