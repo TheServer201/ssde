@@ -1,6 +1,6 @@
 /*
 * The SSDE implementation for X64 instruction set
-* Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
+* Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #include "ssde.hpp"
 #include "ssde_x64.hpp"

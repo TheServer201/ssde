@@ -1,6 +1,6 @@
 The Small Scalable Disassembler Engine a.k.a. SSDE - http://github.com/notnanocat/ssde
 
-Copyright (C) 2015, Constantine Shablya. All rights reserved.
+Copyright (C) 2015-2016, Constantine Shablya. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

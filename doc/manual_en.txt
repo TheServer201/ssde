@@ -7,7 +7,7 @@
                ########   ########  #########  ##########
 
                 The Small Scalable Disassembler Engine
-Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.txt
+Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.txt
                    http://github.com/notnanocat/ssde
 
 

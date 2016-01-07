@@ -1,6 +1,6 @@
 /*
 * The SSDE implementation for ARM instruction set
-* Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
+* Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #include "ssde.hpp"
 #include "ssde_arm.hpp"

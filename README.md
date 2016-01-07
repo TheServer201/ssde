@@ -1,6 +1,6 @@
 **The Small Scalable Disassembler Engine**
 
-Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
+Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
 SSDE is a small, scalable disassembly stream engine, purposed to analyze
 machine code and retrieve information on instructions (their length, opcode,

@@ -1,6 +1,6 @@
 /*
 * The SSDE header file for ssde_x86.cpp
-* Copyright (C) 2015, Constantine Shablya. See Copyright Notice in LICENSE.md
+* Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 */
 #pragma once
 
