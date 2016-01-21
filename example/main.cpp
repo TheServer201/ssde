@@ -55,24 +55,23 @@ int main(int argc, const char *argv[])
 	return 0;
 
 #if 0
-	const string bc =
-		"\x55"
-		"\x31\xd2"
-		"\x89\xe5"
-		"\x8b\x45\x08"
-		"\x56"
-		"\x8b\x75\x0c"
-		"\x53"
-		"\x8d\x58\xff"
-		"\x0f\xb6\x0c\x16"
-		"\x88\x4c\x13\x01"
-		"\x83\xc2\x01"
-		"\x84\xc9"
-		"\x75\xf1"
-		"\x5b"
-		"\x5e"
-		"\x5d"
-		"\xc3";
+	const string bc("\x55"
+	                "\x31\xd2"
+	                "\x89\xe5"
+	                "\x8b\x45\x08"
+	                "\x56"
+	                "\x8b\x75\x0c"
+	                "\x53"
+	                "\x8d\x58\xff"
+	                "\x0f\xb6\x0c\x16"
+	                "\x88\x4c\x13\x01"
+	                "\x83\xc2\x01"
+	                "\x84\xc9"
+	                "\x75\xf1"
+	                "\x5b"
+	                "\x5e"
+	                "\x5d"
+	                "\xc3");
 
 	for (ssde_x86 dis(bc); dis.dec(); dis.next())
 		/*

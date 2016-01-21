@@ -408,10 +408,10 @@ void ssde_x64::decode_prefixes()
 		{
 			has_rex = true;
 
-			rex_w = (uint8_t)prefix & 0x08 ? true : false;
-			rex_r = (uint8_t)prefix & 0x04 ? true : false;
-			rex_x = (uint8_t)prefix & 0x02 ? true : false;
-			rex_b = (uint8_t)prefix & 0x01 ? true : false;
+			rex_w = ((uint8_t)prefix & 0x08) ? true : false;
+			rex_r = ((uint8_t)prefix & 0x04) ? true : false;
+			rex_x = ((uint8_t)prefix & 0x02) ? true : false;
+			rex_b = ((uint8_t)prefix & 0x01) ? true : false;
 
 			continue;
 		}
@@ -460,24 +460,24 @@ void ssde_x64::decode_opcode()
 			uint8_t vex_2 = buffer[ip + length++];
 			uint8_t vex_3 = buffer[ip + length++];
 
-			vex_r  = vex_1 & 0x80 ? true : false;
-			vex_x  = vex_1 & 0x40 ? true : false;
-			vex_b  = vex_1 & 0x20 ? true : false;
-			vex_rr = vex_1 & 0x10 ? true : false;
+			vex_r  = (vex_1 & 0x80) ? true : false;
+			vex_x  = (vex_1 & 0x40) ? true : false;
+			vex_b  = (vex_1 & 0x20) ? true : false;
+			vex_rr = (vex_1 & 0x10) ? true : false;
 
 			vex_decode_mm(vex_1 & 0x03);
 
 
-			vex_w = vex_2 & 0x80 ? true : false;
+			vex_w = (vex_2 & 0x80) ? true : false;
 
 			/* determine destination register from vvvv */
-			vex_reg = ((~vex_2 >> 3) & 0x0f) | (vex_3 & 0x80 ? 0x10 : 0);
+			vex_reg = ((~vex_2 >> 3) & 0x0f) | ((vex_3 & 0x80) ? 0x10 : 0);
 
 			vex_decode_pp(vex_2 & 0x03);
 
-			vex_zero = vex_3 & 0x80 ? true : false;
+			vex_zero = (vex_3 & 0x80) ? true : false;
 			vex_l    = (vex_3 >> 5) & 0x03;
-			vex_sae  = vex_3 & 0x10 ? true : false;
+			vex_sae  = (vex_3 & 0x10) ? true : false;
 
 			vex_opmask = vex_3 & 0x07;
 
@@ -502,12 +502,11 @@ void ssde_x64::decode_opcode()
 			{
 				vex_size = 3;
 
-
 				uint8_t vex_1 = buffer[ip + length++];
 
-				vex_r = vex_1 & 0x80 ? false : true;
-				vex_x = vex_1 & 0x40 ? false : true;
-				vex_b = vex_1 & 0x20 ? false : true;
+				vex_r = (vex_1 & 0x80) ? false : true;
+				vex_x = (vex_1 & 0x40) ? false : true;
+				vex_b = (vex_1 & 0x20) ? false : true;
 
 				vex_decode_mm(vex_1 & 0x1f);
 			}
@@ -523,14 +522,14 @@ void ssde_x64::decode_opcode()
 
 			if (prefix == 0xc4)
 			{
-				vex_w = vex_2 & 0x80 ? true : false;
+				vex_w = (vex_2 & 0x80) ? true : false;
 			}
 			else
 			{
-				vex_r = vex_2 & 0x80 ? false : true;
+				vex_r = (vex_2 & 0x80) ? false : true;
 			}
 
-			vex_l = vex_2 & 0x04 ? 1 : 0;
+			vex_l = (vex_2 & 0x04) ? 1 : 0;
 
 			/* determine destination register from vvvv */
 			vex_reg = (~vex_2 >> 3) & 0x0f;

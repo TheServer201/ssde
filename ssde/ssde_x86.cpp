@@ -413,14 +413,14 @@ void ssde_x86::decode_opcode()
 
 
 			/* determine destination register from vvvv */
-			vex_reg = ((~vex_2 >> 3) & 0x0f) | (vex_3 & 0x80 ? 0x10 : 0);
+			vex_reg = ((~vex_2 >> 3) & 0x0f) | ((vex_3 & 0x80) ? 0x10 : 0);
 
 			vex_decode_pp(vex_2 & 0x03);
 
-			vex_zero = vex_3 & 0x80 ? true : false;
+			vex_zero = (vex_3 & 0x80) ? true : false;
 			vex_l    = (vex_3 >> 5) & 0x03;
 
-			vex_sae  = vex_3 & 0x10 ? true : false;
+			vex_sae  = (vex_3 & 0x10) ? true : false;
 
 			vex_opmask = vex_3 & 0x07;
 
@@ -459,7 +459,7 @@ void ssde_x86::decode_opcode()
 
 			uint8_t vex_2 = buffer[ip + length++];
 
-			vex_l = vex_2 & 0x04 ? 1 : 0;
+			vex_l = (vex_2 & 0x04) ? 1 : 0;
 
 			/* determine destination register from vvvv */
 			vex_reg = (~vex_2 >> 3) & 0x0f;
