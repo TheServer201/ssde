@@ -12,8 +12,8 @@ class ssde
 {
 public:
 	ssde(const std::string &data, size_t pos = 0) :
-		ip(pos),
-		buffer(data)
+		ip{pos},
+		buffer{data}
 	{
 	}
 
@@ -34,5 +34,5 @@ public:
 	int    length = 0;                      // Instruction length, in bytes. Can be manually overriden
 
 protected:
-	const std::string &buffer;
+	const std::string buffer;
 };

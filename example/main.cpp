@@ -19,15 +19,15 @@ int main(int argc, const char *argv[])
 	ios::sync_with_stdio(false);
 
 
-	const string bc("\x01\x20\x40\xe2"
+	const string bc{"\x01\x20\x40\xe2"
 	                "\x02\x20\x61\xe0"
 	                "\x01\x30\xd1\xe4"
 	                "\x00\x00\x53\xe3"
 	                "\x02\x30\xc1\xe7"
 	                "\xfb\xff\xff\x1a"
-	                "\x1e\xff\x2f\xe1", 4*7);
+	                "\x1e\xff\x2f\xe1", 4*7};
 
-	for (ssde_arm dis(bc); dis.dec(); dis.next())
+	for (ssde_arm dis{bc}; dis.dec(); dis.next())
 		/*
 		* call ::next() to iterate and ::dec() to
 		* decode and decide whether we have reached
@@ -55,7 +55,7 @@ int main(int argc, const char *argv[])
 	return 0;
 
 #if 0
-	const string bc("\x55"
+	const string bc{"\x55"
 	                "\x31\xd2"
 	                "\x89\xe5"
 	                "\x8b\x45\x08"
@@ -71,9 +71,9 @@ int main(int argc, const char *argv[])
 	                "\x5b"
 	                "\x5e"
 	                "\x5d"
-	                "\xc3");
+	                "\xc3"};
 
-	for (ssde_x86 dis(bc); dis.dec(); dis.next())
+	for (ssde_x86 dis{bc}; dis.dec(); dis.next())
 		/*
 		* call ::next() to iterate and ::dec() to
 		* decode and decide whether we have reached

@@ -70,7 +70,7 @@ private:
 	void vex_decode_mm(uint8_t mm);
 
 public:
-	bool error_lock = false;                // LOCK prefix is not allowed
+	bool error_lock  = false;               // LOCK prefix is not allowed
 	bool error_novex = false;               // Instruction is only allowed to be VEX encoded
 
 	pref group1 = pref::none;               // Opcode prefix in 1st group, 0 if none. 1st group includes LOCK, REPNZ and REPZ prefixes
