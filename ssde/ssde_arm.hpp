@@ -37,22 +37,22 @@ public:
 	*/
 	enum class cc : uint8_t
 	{
-		eq,
-		ne,
-		hs,
-		lo,
-		mi,
-		pl,
-		vs,
-		vc,
-		hi,
-		ls,
-		ge,
-		lt,
-		gt,
-		le,
-		al,
-		nv,
+		eq = 0x0,
+		ne = 0x1,
+		hs = 0x2,
+		lo = 0x3,
+		mi = 0x4,
+		pl = 0x5,
+		vs = 0x6,
+		vc = 0x7,
+		hi = 0x8,
+		ls = 0x9,
+		ge = 0xa,
+		lt = 0xb,
+		gt = 0xc,
+		le = 0xd,
+		al = 0xe,
+		nv = 0xf,
 	};
 
 	using ssde::ssde;
