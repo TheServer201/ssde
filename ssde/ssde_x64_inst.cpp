@@ -1,6 +1,5 @@
 // SSDE implementation for X64 arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-#include "ssde.hpp"
 #include "ssde_x64.hpp"
 #include <string>
 #include <stdint.h>
@@ -144,8 +143,7 @@ void Inst_x64::internal_decode(const std::string& buffer)
 		{
 			// this instruction lacks mandatory 66 prefix
 
-			error = true;
-			error_opcode = true;
+			signal_error(Error::opcode);
 		}
 
 		if (flags & op::rm)
@@ -164,8 +162,7 @@ void Inst_x64::internal_decode(const std::string& buffer)
 		{
 			// LOCK prefix only makes sense for Mod M
 
-			error = true;
-			error_lock = true;
+			signal_error(Error::lock);
 		}
 
 		// read moffs, imm or rel
@@ -174,17 +171,13 @@ void Inst_x64::internal_decode(const std::string& buffer)
 		if (length > 15)
 		{
 			length = 15;
-
-			error = true;
-			error_length = true;
+			signal_error(Error::length);
 		}
 	}
 	else
 	{
 		length = 1;
-
-		error = true;
-		error_opcode = true;
+		signal_error(Error::opcode);
 	}
 }
 
@@ -268,18 +261,13 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 		length++;
 		has_vex = true;
 
-		if (prefixes[0] != Prefix::none ||
-		    prefixes[1] != Prefix::none ||
-		    prefixes[2] != Prefix::none ||
-		    prefixes[3] != Prefix::none)
+		if (has_prefix())
 		{
-			error = true;
-			error_opcode = true;
+			signal_error(Error::opcode);
 		}
 		else if (has_rex)
 		{
-			error = true;
-			error_opcode = true;
+			signal_error(Error::rex);
 		}
 
 		if (byte_0 == 0x62)
@@ -324,8 +312,7 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 				// TODO: Remove this block if AVX-1024 ever comes out
 				// destination vector can't be wider than 512 bits
 
-				error = true;
-				error_operand = true;
+				signal_error(Error::operand);
 			}
 		}
 		else
@@ -411,8 +398,7 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	{
 		// this instruction can only be VEX-encoded
 
-		error = true;
-		error_novex = true;
+		signal_error(Error::no_vex);
 	}
 
 	// These are two exceptional opcodes that extend using 3 bits of
@@ -500,8 +486,7 @@ void Inst_x64::decode_modrm(const std::string& buffer)
 		{
 			// LOCK prefix is not allowed to be used with Mod R
 
-			error = true;
-			error_lock = true;
+			signal_error(Error::lock);
 		}
 		break;
 	}
@@ -694,8 +679,7 @@ void Inst_x64::vex_decode_mm(uint8_t mm)
 		break;
 
 	default:
-		error = true;
-		error_opcode = true;
+		signal_error(Error::opcode);
 		break;
 	}
 }

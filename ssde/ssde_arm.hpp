@@ -1,21 +1,27 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
-#include "ssde.hpp"
 #include <string>
 #include <stdint.h>
 
 
 // Unlike real ARM CPU, SSDE doesn't strongly require you to have PC aligned to
 // 4 (or 2) byte boundary. Instead, if PC happens to be misaligned (if intended
-// by user) upon ::decode call "error_alignment" field will be set. Instruction
-// still will be decoded normally.
+// by user) upon decode Error::alignment will be signaled. Instruction will
+// still be decoded normally.
 
 namespace ssde
 {
 
-struct Inst_arm : public Inst
+struct Inst_ARM
 {
 public:
+	enum class Error : uint8_t
+	{
+		eof       = 1 << 0, // Reached end of buffer before finished decoding
+		alignment = 1 << 1, // PC is misaligned
+		cpu_state = 1 << 2, // Unknown CPU state
+	};
+
 	enum class CPU_state
 	{
 		arm    = 0x00,
@@ -23,8 +29,7 @@ public:
 		thumb2 = 0x02,
 	};
 
-	// ARM's instruction execution conditions
-	enum class Exec_cond : uint8_t
+	enum class Exec_cond : uint8_t // ARM's execution condition
 	{
 		eq = 0x0,
 		ne = 0x1,
@@ -44,14 +49,38 @@ public:
 		nv = 0xf,
 	};
 
-public:
 
-public:
+	Inst_ARM() = default;
+
+	Inst_ARM(const std::string& buffer, size_t start_pc = 0) :
+		pc(start_pc)
+	{
+		try
+		{
+			internal_decode(buffer);
+		}
+		catch (const std::out_of_range&)
+		{
+			signal_error(Error::eof);
+		}
+	}
+
+	bool has_error(Error signal) const
+	{
+		return (error_flags & static_cast<uint8_t>(signal)) ? true : false;
+	}
+
+	bool has_error() const
+	{
+		return error_flags != 0 ? true : false;
+	}
+
+
+	size_t pc = 0;
+	int    length = 0;
+
 	// Specifies which state the CPU is in and changes decoder's behaviour
 	CPU_state state = CPU_state::arm;
-
-	bool error_cpu_state; // Unknown CPU state
-	bool error_alignment; // PC is not aligned to 4 (or 2) byte boundary
 
 	union
 	{
@@ -67,22 +96,26 @@ public:
 		cond_bits;
 	};
 
-	bool is_branch;
-	bool is_branch_link;
-	int32_t  rel;
-	uint32_t abs;
+	bool     is_branch = false;
+	bool     has_link = false;
+	int32_t  rel = 0;
+	uint32_t rel_abs = 0;
 
-	bool     is_swi;
-	uint32_t swi_data;
+	bool     is_swi = false;
+	uint32_t swi_data = 0;
 
 private:
-	virtual void internal_decode(const std::string&) override;
-
+	void internal_decode(const std::string&);
 	uint32_t fetch(const std::string& buffer);
 	void decode_arm(const std::string& buffer);
 
-private:
-	//uint32_t bc;
+	void signal_error(Error signal)
+	{
+		error_flags |= static_cast<uint8_t>(signal);
+	}
+
+	//uint32_t bc = 0;
+	uint8_t error_flags = 0;
 };
 
 } // namespace ssde

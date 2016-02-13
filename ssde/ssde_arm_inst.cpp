@@ -1,15 +1,13 @@
 // SSDE implementation for ARM arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-#include "ssde.hpp"
 #include "ssde_arm.hpp"
-
 #include <string>
 #include <stdint.h>
 
 
-using ssde::Inst_arm;
+using ssde::Inst_ARM;
 
-void Inst_arm::internal_decode(const std::string& buffer)
+void Inst_ARM::internal_decode(const std::string& buffer)
 {
 	// bc = fetch(buffer);
 
@@ -25,7 +23,7 @@ void Inst_arm::internal_decode(const std::string& buffer)
 }
 
 #if 0
-uint32_t Inst_arm::fetch(const std::string& buffer)
+uint32_t Inst_ARM::fetch(const std::string& buffer)
 {
 	uint32_t bc = 0;
 

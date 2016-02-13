@@ -1,6 +1,5 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
-#include "ssde.hpp"
 #include <string>
 #include <stdint.h>
 
@@ -8,11 +7,20 @@
 namespace ssde
 {
 
-struct Inst_x86 : public Inst
+struct Inst_x86
 {
 public:
-	// X86 prefixes
-	enum class Prefix : uint8_t
+	enum class Error : uint8_t
+	{
+		eof     = 1 << 0, // Reached end of buffer before finished decoding
+		length  = 1 << 1, // Instruction is too long
+		opcode  = 1 << 2, // Instruction doesn't exist
+		operand = 1 << 3, // Operands don't match instruction's requirements
+		no_vex  = 1 << 4, // Instruction should've been VEX encoded
+		lock    = 1 << 5, // LOCK prefix is not allowed
+	};
+
+	enum class Prefix : uint8_t // X86 legacy prefix
 	{
 		none = 0x00,
 
@@ -35,8 +43,7 @@ public:
 		fpu_single = 0xf3,
 	};
 
-	// EVEX rounding modes
-	enum class VEX_rm : uint8_t
+	enum class VEX_rm : uint8_t // EVEX rounding mode
 	{
 		near  = 0x00,
 		floor = 0x01,
@@ -45,8 +52,7 @@ public:
 		none  = (uint8_t)-1
 	};
 
-	// Mod R/M addressing mode
-	enum class RM_mode : uint8_t
+	enum class RM_mode : uint8_t // Mod R/M addressing mode
 	{
 		mem        = 0x00, // [r]
 		mem_disp8  = 0x01, // [r]+disp8
@@ -55,19 +61,46 @@ public:
 	};
 
 
+	Inst_x86() = default;
+
+	Inst_x86(const std::string& buffer, size_t start_ip = 0) :
+		ip(start_ip)
+	{
+		try
+		{
+			internal_decode(buffer);
+		}
+		catch (const std::out_of_range&)
+		{
+			signal_error(Error::eof);
+		}
+	}
+
 	bool has_prefix(Prefix pref) const
 	{
-		return (prefixes[0] == pref ||
-				prefixes[1] == pref ||
-				prefixes[2] == pref ||
-				prefixes[3] == pref);
+		return (prefixes[0] == pref || prefixes[1] == pref ||
+				prefixes[2] == pref || prefixes[3] == pref);
+	}
+
+	bool has_prefix() const
+	{
+		return (prefixes[0] != Prefix::none || prefixes[1] != Prefix::none ||
+				prefixes[2] != Prefix::none || prefixes[3] != Prefix::none);
+	}
+
+	bool has_error(Error signal) const
+	{
+		return (error_flags & static_cast<uint8_t>(signal)) ? true : false;
+	}
+
+	bool has_error() const
+	{
+		return error_flags != 0 ? true : false;
 	}
 
 
-	bool error_lock;  // LOCK prefix is not allowed
-	bool error_novex; // Instruction is only allowed to be VEX encoded
-
-	size_t& ip = pc;
+	size_t ip = 0;
+	int    length = 0;
 
 	// Instruction's prefixes (grouped)
 	// To check if instruction has prefix, use Inst_x86::has_prefix
@@ -75,51 +108,50 @@ public:
 	// 1: Segment (seg_*) prefixes and/or branch hints
 	// 2: Operand size override prefix (p66)
 	// 3: Address size override prefix (p67)
-	Prefix prefixes[4];
+	Prefix prefixes[4] = {Prefix::none};
 
-	bool    has_vex;
-	uint8_t vex_l;
-	bool    vex_zero; // Should zero or merge?; z field
-	uint8_t vex_size;
-	uint8_t vex_reg;
-	uint8_t vex_opmask;
-	VEX_rm  vex_round_to; // EVEX: Rounding mode
-	bool    vex_sae; // EVEX: suppress all exceptions
+	bool    has_vex = false;
+	uint8_t vex_l = 0;
+	bool    vex_zero = false; // Should zero or merge?; z field
+	uint8_t vex_size = 0;
+	uint8_t vex_reg = 0;
+	uint8_t vex_opmask = 0;
+	VEX_rm  vex_round_to = VEX_rm::none; // EVEX: Rounding mode
+	bool    vex_sae = false; // EVEX: suppress all exceptions
 	bool&   vex_rc = vex_sae; // EVEX: rounding control, MXCSR override, implies SAE
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register, for load instructions only
 
-	int     opcode_length;
-	uint8_t opcode[3];
+	int     opcode_length = 0;
+	uint8_t opcode[3] = {0};
 
-	bool    has_modrm;
-	RM_mode modrm_mod; // Mod R/M address mode
-	uint8_t modrm_reg; // Register number or opcode information
-	uint8_t modrm_rm; // Operand register
+	bool    has_modrm = false;
+	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode
+	uint8_t modrm_reg = 0; // Register number or opcode information
+	uint8_t modrm_rm = 0; // Operand register
 
-	bool    has_sib;
-	uint8_t sib_scale;
-	uint8_t sib_index;
-	uint8_t sib_base;
+	bool    has_sib = false;
+	uint8_t sib_scale = 0;
+	uint8_t sib_index = 0;
+	uint8_t sib_base = 0;
 
-	bool     has_disp;
-	int      disp_size;
-	uint32_t disp;
+	bool     has_disp = false;
+	int      disp_size = 0;
+	uint32_t disp = 0;
 
-	bool     has_imm;
-	bool     has_imm2;
-	int      imm_size;
-	int      imm2_size;
-	uint32_t imm;
-	uint32_t imm2;
+	bool     has_imm = false;
+	bool     has_imm2 = false;
+	int      imm_size = 0;
+	int      imm2_size = 0;
+	uint32_t imm = 0;
+	uint32_t imm2 = 0;
 
-	bool     has_rel;
-	int      rel_size;
-	int32_t  rel;
-	uint32_t rel_abs; // Absolute address for destination
+	bool     has_rel = false;
+	int      rel_size = 0;
+	int32_t  rel = 0;
+	uint32_t rel_abs = 0; // Absolute address for destination
 
 private:
-	virtual void internal_decode(const std::string&) override;
-
+	void internal_decode(const std::string&);
 	void decode_prefixes(const std::string&);
 	void decode_opcode(const std::string&);
 	void decode_modrm(const std::string&);
@@ -129,8 +161,13 @@ private:
 	void vex_decode_pp(uint8_t pp);
 	void vex_decode_mm(uint8_t mm);
 
-private:
-	uint16_t flags;
+	void signal_error(Error signal)
+	{
+		error_flags |= static_cast<uint8_t>(signal);
+	}
+
+	uint16_t flags = 0;
+	uint8_t  error_flags = 0;
 };
 
 } // namespace ssde
