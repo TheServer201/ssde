@@ -13,37 +13,28 @@
     <ClInclude Include="..\ssde\ssde.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
-    <ClInclude Include="..\ssde\inst_x64.hpp">
+    <ClInclude Include="..\ssde\ssde_arm.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
-    <ClInclude Include="..\ssde\inst_x86.hpp">
+    <ClInclude Include="..\ssde\ssde_x64.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
-    <ClInclude Include="..\ssde\inst_arm.hpp">
+    <ClInclude Include="..\ssde\ssde_x86.hpp">
       <Filter>ssde</Filter>
-    </ClInclude>
-    <ClInclude Include="hde32.h">
-      <Filter>Файлы исходного кода</Filter>
-    </ClInclude>
-    <ClInclude Include="table32.h">
-      <Filter>Файлы исходного кода</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="..\ssde\inst_x64.cpp">
+    <ClCompile Include="..\ssde\ssde_arm.cpp">
       <Filter>ssde</Filter>
     </ClCompile>
-    <ClCompile Include="..\ssde\inst_x86.cpp">
+    <ClCompile Include="..\ssde\ssde_x64.cpp">
       <Filter>ssde</Filter>
     </ClCompile>
-    <ClCompile Include="..\ssde\inst_arm.cpp">
+    <ClCompile Include="..\ssde\ssde_x86.cpp">
       <Filter>ssde</Filter>
-    </ClCompile>
-    <ClCompile Include="hde32.c">
-      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

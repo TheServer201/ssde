@@ -153,18 +153,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ssde\inst_arm.hpp" />
-    <ClInclude Include="..\ssde\inst_x86.hpp" />
     <ClInclude Include="..\ssde\ssde.hpp" />
-    <ClInclude Include="..\ssde\inst_x64.hpp" />
-    <ClInclude Include="hde32.h" />
-    <ClInclude Include="table32.h" />
+    <ClInclude Include="..\ssde\ssde_arm.hpp" />
+    <ClInclude Include="..\ssde\ssde_x64.hpp" />
+    <ClInclude Include="..\ssde\ssde_x86.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\ssde\inst_arm.cpp" />
-    <ClCompile Include="..\ssde\inst_x64.cpp" />
-    <ClCompile Include="..\ssde\inst_x86.cpp" />
-    <ClCompile Include="hde32.c" />
+    <ClCompile Include="..\ssde\ssde_arm.cpp" />
+    <ClCompile Include="..\ssde\ssde_x64.cpp" />
+    <ClCompile Include="..\ssde\ssde_x86.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
