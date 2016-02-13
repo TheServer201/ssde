@@ -2,12 +2,9 @@
 
 Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
-SSDE is a small, scalable disassembly stream engine, purposed to analyze
-machine code and retrieve information on instructions (their length, opcode,
-correctness, etc).
-
-Check _doc/manual_en.txt_ or _doc/manual_ru.txt_ for information about SSDE
-and documentation in the language you speak.
+SSDE is a small, scalable disassembly engine purposed for analysis of machine
+code and retrieving information on instructions (their length, opcode,
+correctness, etc)
 
 Check _example/_ to see how SSDE can be used.
 
@@ -27,5 +24,5 @@ Check _example/_ to see how SSDE can be used.
 	 ______________________________________________
 	|                   |                  |       |
 	| Core i3 2350m     | Windows 8.1 x64  | 64 EL |
-	| ARMv6 processor   | Raspbian 7       | 32 EL |
+	| ARMv6 BCM2835     | Raspbian 7       | 32 EL |
 	|___________________|__________________|_______|

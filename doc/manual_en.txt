@@ -21,7 +21,7 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
 1 What is SSDE?
 
-  SSDE is a small, scalable disassembly engine, purposed to analyze machine
+  SSDE is a small, scalable disassembly engine purposed for analysis of machine
   code and retrieving information on instructions (their length, opcode,
   correctness, etc).
 
