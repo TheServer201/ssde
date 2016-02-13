@@ -41,9 +41,9 @@ int main(int argc, const char* argv[])
 	                     "\x5d"
 	                     "\xc3"};
 
-	ssde::Disasm<ssde::Inst_x86> dis {bc_x86};
-
-	while (dis.has_next())
+	for (ssde::Disasm<ssde::Inst_x86> dis {bc_x86};
+	     dis.has_next();
+	     dis.next())
 	{
 		auto inst = dis.decode();
 
@@ -56,8 +56,6 @@ int main(int argc, const char* argv[])
 			cout << " # -> " << setfill('0') << setw(8) << hex << inst.rel_abs;
 
 		cout << "\n";
-
-		dis.next();
 	}
 
 	return 0;
