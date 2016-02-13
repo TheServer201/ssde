@@ -68,6 +68,5 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
 4 Is SSDE thread safe?
 
-  Yes, SSDE is thread safe as long as only one thread operates on instance of
-  ssde::Disasm or ssde::Inst. Each thread can use their own ssde::Disasm
-  independently.
+  Yes, SSDE is thread safe as long as only one thread operates on the instance
+  of ssde::Disasm and/or ssde::Inst.
