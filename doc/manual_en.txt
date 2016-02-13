@@ -149,7 +149,7 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.tx
   ssde::ssde constructors. Prototype of the class must be declared in
   in .hpp files equvalent to its class name. e.g.:
 
-    /* ssde_arm.hpp */
+    // ssde_arm.hpp
       class ssde_arm : public ssde
       {
       public:

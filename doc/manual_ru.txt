@@ -166,7 +166,7 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.tx
   конструкторы ssde::ssde. Прототип класса должен быть описан в .hpp файле
   с таким же названием, как и у класса. Например:
 
-    /* ssde_arm.hpp */
+    // ssde_arm.hpp
       class ssde_arm : public ssde
       {
       public:

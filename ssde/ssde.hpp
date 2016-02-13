@@ -1,38 +1,116 @@
-/*
-* The SSDE header file
-* Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-*/
+// SSDE base instruction and disassembler
+// Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
 #include <string>
-
+#include <type_traits>
 #include <stdint.h>
 
 
-class ssde
+namespace ssde
+{
+
+struct Inst;
+
+template<class T_Inst> class Disasm
+{
+	static_assert(std::is_base_of<Inst, T_Inst>::value, "ssde::Disasm<T_Inst> only works with structs inherited from Inst");
+
+public:
+	Disasm(const std::string& raw_data, size_t start_pc = 0) :
+		buffer(raw_data),
+		pc(start_pc)
+	{
+	}
+
+	T_Inst decode()
+	{
+		T_Inst inst { };
+		inst.decode(buffer, pc);
+		length = inst.length;
+
+		return inst;
+	}
+
+	void next()
+	{
+		pc += length;
+	}
+
+	bool has_next() const
+	{
+		return get_next_pc() < buffer.length();
+	}
+
+	void set_pc(size_t new_pc)
+	{
+		pc     = new_pc;
+		length = 0;
+	}
+
+	size_t get_pc() const
+	{
+		return pc;
+	}
+
+	size_t get_next_pc() const
+	{
+		return pc + length;
+	}
+	
+public:
+	size_t pc;
+	int    length = 0;
+
+	const std::string& buffer;
+};
+
+
+struct Inst
 {
 public:
-	ssde(const std::string &data, size_t pos = 0) :
-		ip{pos},
-		buffer{data}
+	enum class Errors
 	{
+		opcode  = 1 << 0,
+		operand = 1 << 1,
+		length  = 1 << 2,
+	};
+
+
+	virtual ~Inst() = default;
+
+
+	void decode(const std::string& buffer)
+	{
+		try
+		{
+			internal_decode(buffer);
+		}
+		catch (const std::out_of_range&)
+		{
+			error = true;
+			error_length = true;
+		}
 	}
 
-	virtual bool dec() = 0;                 // Decode instruction pointed by IP
-
-	void next()                             // Advance to the next instruction
+	void decode(const std::string& buffer, size_t start_pc)
 	{
-		ip += length;
+		pc = start_pc;
+		decode(buffer);
 	}
 
-public:
-	bool error         = false;             // Decoding error
-	bool error_opcode  = false;             // Bad opcode
-	bool error_operand = false;             // Bad operand(s)
-	bool error_length  = false;             // Instruction is too long
 
-	size_t ip     = 0;                      // Instruction pointer. Can be manually overriden
-	int    length = 0;                      // Instruction length, in bytes. Can be manually overriden
+	/* replace errors with enum */
+
+	bool error;
+	bool error_opcode;  // Opcode is invalid
+	bool error_operand; // Operand/s are invalid
+	bool error_length;  // Instruction length is either too long or too short
+
+	size_t pc;
+	int    length;
 
 protected:
-	const std::string buffer;
+	virtual void internal_decode(const std::string&) = 0;
 };
+
+} // namespace ssde

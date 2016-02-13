@@ -4,6 +4,8 @@ example/.vs/*
 .gitattributes
 
 *.o
+*.iobj
+*.ipdb
 *.obj
 *.exe
 *.ilk
