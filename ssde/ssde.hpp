@@ -61,7 +61,7 @@ public:
 	size_t pc;
 	int    length = 0;
 
-	const std::string& buffer;
+	const std::string buffer;
 };
 
 

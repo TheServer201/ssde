@@ -15,13 +15,13 @@ int main(int argc, const char* argv[])
 	ios::sync_with_stdio(false);
 
 
-	const string bc_arm {"\x01\x20\x40\xe2"
+	/*const string bc_arm {"\x01\x20\x40\xe2"
 	                     "\x02\x20\x61\xe0"
 	                     "\x01\x30\xd1\xe4"
 	                     "\x00\x00\x53\xe3"
 	                     "\x02\x30\xc1\xe7"
 	                     "\xfb\xff\xff\x1a"
-	                     "\x1e\xff\x2f\xe1", 4*7};
+	                     "\x1e\xff\x2f\xe1", 4*7};*/
 
 	const string bc_x86 {"\x55"
 	                     "\x31\xd2"

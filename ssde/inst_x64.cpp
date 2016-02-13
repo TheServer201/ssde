@@ -40,7 +40,7 @@ enum : uint16_t
 };
 
 // 1st opcode flag table
-static const uint16_t op::table[256] =
+static const uint16_t table[256] =
 {
 	//x0  |  x1  |  x2  |  x3  |  x4  |  x5  |  x6  |  x7  |  x8  |  x9  |  xA  |  xB  |  xC  |  xD  |  xE  |  xF
 	  rm  ,  rm  ,  rm  ,  rm  ,  i8  ,  i32 , error, error,  rm  ,  rm  ,  rm  ,  rm  ,  i8  ,  i32 , error, error, // 0x

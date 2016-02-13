@@ -22,6 +22,12 @@
     <ClInclude Include="..\ssde\inst_arm.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
+    <ClInclude Include="hde32.h">
+      <Filter>Файлы исходного кода</Filter>
+    </ClInclude>
+    <ClInclude Include="table32.h">
+      <Filter>Файлы исходного кода</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -35,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="..\ssde\inst_arm.cpp">
       <Filter>ssde</Filter>
+    </ClCompile>
+    <ClCompile Include="hde32.c">
+      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

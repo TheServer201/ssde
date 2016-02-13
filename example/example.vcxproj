@@ -157,11 +157,14 @@
     <ClInclude Include="..\ssde\inst_x86.hpp" />
     <ClInclude Include="..\ssde\ssde.hpp" />
     <ClInclude Include="..\ssde\inst_x64.hpp" />
+    <ClInclude Include="hde32.h" />
+    <ClInclude Include="table32.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ssde\inst_arm.cpp" />
     <ClCompile Include="..\ssde\inst_x64.cpp" />
     <ClCompile Include="..\ssde\inst_x86.cpp" />
+    <ClCompile Include="hde32.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
