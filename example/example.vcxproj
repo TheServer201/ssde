@@ -153,16 +153,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ssde\ssde.hpp" />
+    <ClCompile Include="..\ssde\ssde_arm_inst.cpp" />
+    <ClCompile Include="..\ssde\ssde_x64_inst.cpp" />
+    <ClCompile Include="..\ssde\ssde_x86_inst.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\ssde\ssde_arm.hpp" />
     <ClInclude Include="..\ssde\ssde_x64.hpp" />
     <ClInclude Include="..\ssde\ssde_x86.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\ssde\ssde_arm.cpp" />
-    <ClCompile Include="..\ssde\ssde_x64.cpp" />
-    <ClCompile Include="..\ssde\ssde_x86.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

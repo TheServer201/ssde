@@ -6,13 +6,24 @@
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="ssde">
-      <UniqueIdentifier>{d975d7c5-49c6-4a7f-a940-b4601a3a12fc}</UniqueIdentifier>
+      <UniqueIdentifier>{5999cd66-dae9-49e7-926a-83bd98579c08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ssde\ssde.hpp">
+    <ClCompile Include="main.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ssde\ssde_arm_inst.cpp">
       <Filter>ssde</Filter>
-    </ClInclude>
+    </ClCompile>
+    <ClCompile Include="..\ssde\ssde_x64_inst.cpp">
+      <Filter>ssde</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ssde\ssde_x86_inst.cpp">
+      <Filter>ssde</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\ssde\ssde_arm.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
@@ -22,19 +33,5 @@
     <ClInclude Include="..\ssde\ssde_x86.hpp">
       <Filter>ssde</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ssde\ssde_arm.cpp">
-      <Filter>ssde</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ssde\ssde_x64.cpp">
-      <Filter>ssde</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ssde\ssde_x86.cpp">
-      <Filter>ssde</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
