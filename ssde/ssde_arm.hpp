@@ -107,15 +107,12 @@ public:
 
 private:
 	void internal_decode(const std::string&);
-	uint32_t fetch(const std::string& buffer);
-	void decode_arm(const std::string& buffer);
 
 	void signal_error(Error signal)
 	{
 		error_flags |= static_cast<uint8_t>(signal);
 	}
 
-	//uint32_t bc = 0;
 	uint8_t error_flags = 0;
 };
 
