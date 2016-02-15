@@ -100,8 +100,8 @@ public:
 	}
 
 
-	size_t ip = 0;
-	int    length = 0;
+	size_t  ip = 0;
+	int32_t length = 0;
 
 	// Instruction's prefixes (grouped)
 	// To check if instruction has prefix, use Inst_x86::has_prefix
@@ -122,7 +122,7 @@ public:
 	bool&   vex_rc = vex_sae; // EVEX: rounding control, MXCSR override, implies SAE
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register, for load instructions only
 
-	int     opcode_length = 0;
+	int32_t opcode_length = 0;
 	uint8_t opcode[3] = {0};
 
 	bool    has_modrm = false;
@@ -136,18 +136,18 @@ public:
 	uint8_t sib_base = 0;
 
 	bool     has_disp = false;
-	int      disp_size = 0;
+	int32_t  disp_size = 0;
 	uint32_t disp = 0;
 
 	bool     has_imm = false;
 	bool     has_imm2 = false;
-	int      imm_size = 0;
-	int      imm2_size = 0;
+	int32_t  imm_size = 0;
+	int32_t  imm2_size = 0;
 	uint32_t imm = 0;
 	uint32_t imm2 = 0;
 
 	bool     has_rel = false;
-	int      rel_size = 0;
+	int32_t  rel_size = 0;
 	int32_t  rel = 0;
 	uint32_t rel_abs = 0; // Absolute address for destination
 

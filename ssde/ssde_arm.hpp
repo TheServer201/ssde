@@ -77,8 +77,8 @@ public:
 	}
 
 
-	size_t pc = 0;
-	int    length = 0;
+	size_t  pc = 0;
+	int32_t length = 0;
 
 	// Specifies which state the CPU is in and changes decoder's behaviour
 	CPU_state state = CPU_state::arm;

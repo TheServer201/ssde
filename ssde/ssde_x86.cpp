@@ -185,7 +185,7 @@ void Inst_x86::decode_prefixes(const std::string& buffer)
 	// meets if there was a prefix from the same group before it.
 	// Instruction decoders can only handle words up to 15 bytes long,
 	// if the word is longer than that, decoder will fail.
-	for (int i = 0; i < 15; ++i, ++length)
+	for (int32_t i = 0; i < 15; ++i, ++length)
 	{
 		Prefix pref = static_cast<Prefix>(buffer.at(ip + length));
 
@@ -450,7 +450,7 @@ void Inst_x86::read_disp(const std::string& buffer)
 {
 	disp = 0;
 
-	for (int i = 0; i < disp_size; ++i)
+	for (int32_t i = 0; i < disp_size; ++i)
 		disp |= buffer.at(ip + length++) << i*8;
 
 	if (disp & (1 << (disp_size*8 - 1)))
@@ -487,7 +487,7 @@ void Inst_x86::read_imm(const std::string& buffer)
 			has_imm = true;
 			imm_size = (prefixes[2] == Prefix::p66) ? 2 : 4;
 		}
-		
+
 		if (flags & op::i16)
 		{
 			if (has_imm)
@@ -521,14 +521,14 @@ void Inst_x86::read_imm(const std::string& buffer)
 	{
 		imm = 0;
 
-		for (int i = 0; i < imm_size; ++i)
+		for (int32_t i = 0; i < imm_size; ++i)
 			imm |= buffer.at(ip + length++) << i*8;
 
 		if (has_imm2)
 		{
 			imm2 = 0;
 
-			for (int i = 0; i < imm2_size; ++i)
+			for (int32_t i = 0; i < imm2_size; ++i)
 				imm2 |= buffer.at(ip + length++) << i*8;
 		}
 	}
