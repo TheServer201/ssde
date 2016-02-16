@@ -312,14 +312,25 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 	}
 	else
 	{
-		opcode[0] = buffer.at(ip + length++);
+		opcode[0] = buffer.at(ip + length);
 
-		if (opcode[0] != 0x0f)
+		if (opcode[0] == 0x0f)
 		{
-			opcode[1] = buffer.at(ip + length++);
+			opcode[1] = buffer.at(ip + length+1);
 
 			if (opcode[1] == 0x38 || opcode[1] == 0x3a)
-				opcode[2] = buffer.at(ip + length++);
+			{
+				opcode[2] = buffer.at(ip + length+2);
+				length += 3;
+			}
+			else
+			{
+				length += 2;
+			}
+		}
+		else
+		{
+			length += 1;
 		}
 	}
 

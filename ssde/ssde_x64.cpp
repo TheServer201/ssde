@@ -355,14 +355,25 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	}
 	else
 	{
-		opcode[0] = buffer.at(ip + length++);
+		opcode[0] = buffer.at(ip + length);
 
-		if (opcode[0] != 0x0f)
+		if (opcode[0] == 0x0f)
 		{
-			opcode[1] = buffer.at(ip + length++);
+			opcode[1] = buffer.at(ip + length+1);
 
 			if (opcode[1] == 0x38 || opcode[1] == 0x3a)
-				opcode[2] = buffer.at(ip + length++);
+			{
+				opcode[2] = buffer.at(ip + length+2);
+				length += 3;
+			}
+			else
+			{
+				length += 2;
+			}
+		}
+		else
+		{
+			length += 1;
 		}
 	}
 
@@ -428,7 +439,8 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 
 void Inst_x64::decode_modrm(const std::string& buffer)
 {
-	uint8_t modrm_byte = buffer.at(ip + length++);
+	uint8_t modrm_byte = buffer.at(ip + length);
+	length += 1;
 
 	has_modrm = true;
 	modrm_mod = static_cast<RM_mode>((modrm_byte >> 6) & 0x03);
@@ -492,7 +504,8 @@ void Inst_x64::decode_modrm(const std::string& buffer)
 
 void Inst_x64::decode_sib(const std::string& buffer)
 {
-	uint8_t sib_byte = buffer.at(ip + length++);
+	uint8_t sib_byte = buffer.at(ip + length);
+	length += 1;
 
 	sib_scale = 1 << ((sib_byte >> 6) & 0x03);
 	sib_index = (sib_byte >> 3) & 0x07;
