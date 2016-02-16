@@ -231,13 +231,10 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 	{
 		// looks like we've found a VEX prefix
 
-		length++;
 		has_vex = true;
 
 		if (has_prefix())
-		{
 			signal_error(Error::opcode);
-		}
 
 		if (byte_0 == 0x62)
 		{
@@ -245,9 +242,9 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 
 			vex_size = 4;
 
-			uint8_t byte_1 = buffer.at(ip + length++);
-			uint8_t byte_2 = buffer.at(ip + length++);
-			uint8_t byte_3 = buffer.at(ip + length++);
+			uint8_t byte_1 = buffer.at(ip + length+1);
+			uint8_t byte_2 = buffer.at(ip + length+2);
+			uint8_t byte_3 = buffer.at(ip + length+3);
 
 			vex_decode_mm(byte_1 & 0x03);
 
@@ -279,33 +276,39 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 		}
 		else
 		{
+			uint8_t byte_e = 0;
+
 			if (byte_0 == 0xc4)
 			{
 				vex_size = 3;
 
-				uint8_t byte_1 = buffer.at(ip + length++);
+				uint8_t byte_1 = buffer.at(ip + length+1);
+				byte_e = buffer.at(ip + length+2);
+
 				vex_decode_mm(byte_1 & 0x1f);
 			}
 			else
 			{
 				vex_size = 2;
+
+				byte_e = buffer.at(ip + length+1);
 				opcode[0] = 0x0f;
 			}
 
-			uint8_t byte_2 = buffer.at(ip + length++);
-
-			vex_l = (byte_2 & 0x04) ? 1 : 0;
+			vex_l = (byte_e & 0x04) ? 1 : 0;
 
 			// determine destination register from vvvv
-			vex_reg = (~byte_2 >> 3) & 0x0f;
+			vex_reg = (~byte_e >> 3) & 0x0f;
 
 			// read prefix bytes from pp field
-			vex_decode_pp(byte_2 & 0x03);
+			vex_decode_pp(byte_e & 0x03);
 		}
+
+		length += vex_size;
 	}
 	else
 	{
-		opcode[0] = buffer.at(ip + length++);
+		opcode[0] = buffer.at(ip + length);
 
 		if (opcode[0] != 0x0f)
 		{
@@ -316,7 +319,7 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 
 	if (opcode[0] == 0x0f)
 	{
-		opcode[1] = buffer.at(ip + length++);
+		opcode[1] = buffer.at(ip + length+1);
 
 		switch (opcode[1])
 		{
@@ -327,23 +330,28 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 
 		case 0x38:
 			opcode_length = 3;
-			opcode[2] = buffer.at(ip + length++);
+			opcode[2] = buffer.at(ip + length+2);
 			flags = op::table_38[opcode[2]];
 			break;
 
 		case 0x3a:
 			opcode_length = 3;
-			opcode[2] = buffer.at(ip + length++);
+			opcode[2] = buffer.at(ip + length+2);
 			flags = op::table_3a[opcode[2]];
 			break;
 		}
 	}
 
-	if ((flags & op::vx) && !has_vex)
+	if (!has_vex)
 	{
-		// this instruction can only be VEX-encoded
+		length += opcode_length;
 
-		signal_error(Error::no_vex);
+		if (flags & op::vx)
+		{
+			// this instruction can only be VEX-encoded
+
+			signal_error(Error::no_vex);
+		}
 	}
 
 	// These are two exceptional opcodes that extend using 3 bits of
@@ -375,7 +383,8 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 
 void Inst_x86::decode_modrm(const std::string& buffer)
 {
-	uint8_t modrm_byte = buffer.at(ip + length++);
+	uint8_t modrm_byte = buffer.at(ip + length);
+	length++;
 
 	has_modrm = true;
 	modrm_mod = static_cast<RM_mode>((modrm_byte >> 6) & 0x03);
@@ -439,7 +448,8 @@ void Inst_x86::decode_modrm(const std::string& buffer)
 
 void Inst_x86::decode_sib(const std::string& buffer)
 {
-	uint8_t sib_byte = buffer.at(ip + length++);
+	uint8_t sib_byte = buffer.at(ip + length);
+	length++;
 
 	sib_scale = 1 << ((sib_byte >> 6) & 0x03);
 	sib_index = (sib_byte >> 3) & 0x07;
@@ -451,7 +461,9 @@ void Inst_x86::read_disp(const std::string& buffer)
 	disp = 0;
 
 	for (int32_t i = 0; i < disp_size; ++i)
-		disp |= buffer.at(ip + length++) << i*8;
+		disp |= buffer.at(ip + length+i) << i*8;
+
+	length += disp_size;
 
 	if (disp & (1 << (disp_size*8 - 1)))
 	{
@@ -522,14 +534,18 @@ void Inst_x86::read_imm(const std::string& buffer)
 		imm = 0;
 
 		for (int32_t i = 0; i < imm_size; ++i)
-			imm |= buffer.at(ip + length++) << i*8;
+			imm |= buffer.at(ip + length+i) << i*8;
+
+		length += imm_size;
 
 		if (has_imm2)
 		{
 			imm2 = 0;
 
 			for (int32_t i = 0; i < imm2_size; ++i)
-				imm2 |= buffer.at(ip + length++) << i*8;
+				imm2 |= buffer.at(ip + length+i) << i*8;
+
+			length += imm2_size;
 		}
 	}
 
