@@ -341,9 +341,6 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 				opcode[0] = 0x0f;
 			}
 
-
-			buffer.at(ip + length++);
-
 			if (byte_0 == 0xc4)
 			{
 				rex_w = (byte_e & 0x80) ? 1 : 0;
