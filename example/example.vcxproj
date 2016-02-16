@@ -153,9 +153,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\ssde\ssde_arm_inst.cpp" />
-    <ClCompile Include="..\ssde\ssde_x64_inst.cpp" />
-    <ClCompile Include="..\ssde\ssde_x86_inst.cpp" />
+    <ClCompile Include="..\ssde\ssde_x64.cpp" />
+    <ClCompile Include="..\ssde\ssde_x86.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

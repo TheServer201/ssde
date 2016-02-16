@@ -15,35 +15,6 @@ int main(int argc, const char* argv[])
 	ios::sync_with_stdio(false);
 
 
-	/*const string bc_arm {"\x01\x20\x40\xe2"
-	                     "\x02\x20\x61\xe0"
-	                     "\x01\x30\xd1\xe4"
-	                     "\x00\x00\x53\xe3"
-	                     "\x02\x30\xc1\xe7"
-	                     "\xfb\xff\xff\x1a"
-	                     "\x1e\xff\x2f\xe1", 4*7};*/
-
-	/*
-	for (ssde::Disasm<ssde::Inst_arm> dis {bc_arm};
-	     dis.has_next();
-	     dis.next())
-	{
-		auto inst = dis.decode();
-
-		cout << setfill('0') << setw(8) << hex << inst.pc << ": ";
-
-		for (int i = 0; i < inst.length; ++i)
-			cout << setfill('0') << setw(2) << hex << (static_cast<int>(bc_arm[inst.pc+i]) & 0xff);
-		
-		if (inst.is_branch)
-			cout << " # -> " << setfill('0') << setw(8) << hex << inst.;
-
-		cout << "\n";
-	}
-	*/
-
-	
-#if 0
 	const string bc_x86 {"\x55"
 	                     "\x31\xd2"
 	                     "\x89\xe5"
@@ -62,23 +33,22 @@ int main(int argc, const char* argv[])
 	                     "\x5d"
 	                     "\xc3"};
 
-	for (ssde::Disasm<ssde::Inst_x86> dis {bc_x86};
-	     dis.has_next();
-	     dis.next())
+	for (size_t i = 0; i < bc_x86.length(); 0)
 	{
-		auto inst = dis.decode();
+		ssde::Inst_x86 inst {bc_x86, i};
 
-		cout << setfill('0') << setw(8) << hex << inst.pc << ": ";
+		cout << setfill('0') << setw(8) << hex << inst.ip << ": ";
 
-		for (int i = 0; i < inst.length; ++i)
-			cout << setfill('0') << setw(2) << hex << (static_cast<int>(bc_x86[inst.pc+i]) & 0xff);
-		
+		for (int32_t j = 0; j < inst.length; ++j)
+			cout << setfill('0') << setw(2) << hex << (static_cast<int32_t>(bc_x86[i+j]) & 0xff);
+
 		if (inst.has_rel)
 			cout << " # -> " << setfill('0') << setw(8) << hex << inst.rel_abs;
 
 		cout << "\n";
+
+		i += inst.length;
 	}
-#endif
 
 	return 0;
 }
