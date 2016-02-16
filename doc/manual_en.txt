@@ -12,11 +12,11 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
 
 
- 1 What is SSDE?
- 2 "Why does SSDE exist, if disassembler engines such as HDE, diStorm,
-  BeaEngine etc already exist?" or "The advantages of SSDE"
-  2.1 Performance and benchmarks
- 3 Is SSDE thread safe?
+  1 What is SSDE?
+  2 "Why does SSDE exist, if disassembler engines such as HDE, diStorm,
+      BeaEngine etc already exist?" or "The advantages of SSDE"
+    2.1 Performance and benchmarks
+  3 Is SSDE thread safe?
 
 
 1 What is SSDE?
@@ -27,22 +27,21 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
   SSDE is quite functional, e.g.: you can build a complete disassembler which
   would output assembly listing of the program generated from machine code
-  using SSDE. Scalability of SSDE lets you perform analysis of multiple
-  parts at the same time using multiple threads.
+  using SSDE. Scalability of SSDE lets you perform analysis on data at the same
+  time using multiple threads.
 
 
 2 "Why does SSDE exist, if disassembler engines such as HDE, diStorm,
   BeaEngine etc already exist?" or "The advantages of SSDE"
 
   Motivation for writing SSDE was that existing disassembler engines were
-  either large and/or were not-free, or they were obsolete and wouldn't
-  support new instructions or were not maintained. Other than that, it's
-  planned to support different architectures. SSDE is licensed under MIT
+  either large and/or were not free, or they were obsolete and wouldn't
+  support new instructions, or were not maintained. SSDE is licensed under MIT
   license, which lets you use it in your private or commerical projects without
-  any kinds of restrictions and/or liabilities. SSDE modules are written with
-  portability in mind: they should work on any machine, regardless of
-  processor architecture, endianness, OS etc. All SSDE code is written in C++,
-  compliant to C++11.
+  any kinds of restrictions and/or liabilities. Other than that, it's planned
+  to support different architectures. SSDE modules are written with portability
+  in mind: they should work on any machine, regardless of processor
+  architecture, endianness, OS etc. All SSDE code is written in C++11.
 
   Main advantages of SSDE:
     - modularity (use only what is required)
@@ -66,7 +65,7 @@ Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
     HDE32C : 5.862μs
 
 
-4 Is SSDE thread safe?
+3 Is SSDE thread safe?
 
   Yes, SSDE is thread safe as long as only one thread operates on the instance
-  of ssde::Disasm and/or ssde::Inst.
+  of ssde::Disasm_?? and/or ssde::Inst_??.
