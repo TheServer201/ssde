@@ -156,12 +156,13 @@ private:
 	void internal_decode(const std::string&);
 	void decode_prefixes(const std::string&);
 	void decode_opcode(const std::string&);
+	void decode_vex(const std::string&);
+	void vex_decode_pp(uint8_t pp);
+	void vex_decode_mm(uint8_t mm);
 	void decode_modrm(const std::string&);
 	void decode_sib(const std::string&);
 	void read_disp(const std::string&);
 	void read_imm(const std::string&);
-	void vex_decode_pp(uint8_t pp);
-	void vex_decode_mm(uint8_t mm);
 
 	void signal_error(Error signal)
 	{

@@ -231,84 +231,7 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 	{
 		// looks like we've found a VEX prefix
 
-		has_vex = true;
-
-		if (has_prefix())
-			signal_error(Error::opcode);
-
-		if (byte_0 == 0xc5)
-		{
-			vex_size = 2;
-
-			uint8_t byte_1 = buffer.at(ip + length+1);
-
-			vex_l = (byte_1 & 0x04) ? 1 : 0;
-			// determine destination register from vvvv
-			vex_reg = (~byte_1 >> 3) & 0x0f;
-
-			opcode[0] = 0x0f;
-
-			// read prefix bytes from pp field
-			vex_decode_pp(byte_1 & 0x03);
-		}
-		else if (byte_0 == 0xc4)
-		{
-			vex_size = 3;
-
-			uint8_t byte_1 = buffer.at(ip + length+1);
-			uint8_t byte_2 = buffer.at(ip + length+2);
-
-			// 3 byte VEX stores REX bits inverted in 2nd byte
-			vex_l = (byte_2 & 0x04) ? 1 : 0;
-			// determine destination register from vvvv
-			vex_reg = (~byte_2 >> 3) & 0x0f;
-
-			// read opcode bytes from mm field
-			vex_decode_mm(byte_1 & 0x1f);
-
-			// read prefix bytes from pp field
-			vex_decode_pp(byte_2 & 0x03);
-		}
-		else if (byte_0 == 0x62)
-		{
-			// this is a 4 byte VEX aka EVEX
-
-			vex_size = 4;
-
-			uint8_t byte_1 = buffer.at(ip + length+1);
-			uint8_t byte_2 = buffer.at(ip + length+2);
-			uint8_t byte_3 = buffer.at(ip + length+3);
-
-			vex_decode_mm(byte_1 & 0x03);
-
-			// determine destination register from vvvv
-			vex_reg = ((~byte_2 >> 3) & 0x0f) | ((byte_3 & 0x80) ? 0x10 : 0);
-
-			vex_decode_pp(byte_2 & 0x03);
-
-			vex_l = (byte_3 >> 5) & 0x03;
-			vex_zero = (byte_3 & 0x80) ? true : false;
-			vex_sae = (byte_3 & 0x10) ? true : false;
-
-			vex_opmask = byte_3 & 0x07;
-
-			if (vex_rc) // aka vex_sae
-			{
-				// rounding control, implies vector is 512 bits wide
-
-				vex_round_to = static_cast<VEX_rm>(vex_l);
-				vex_l = 0x02;
-			}
-			else if (vex_l == 0x03)
-			{
-				// TODO: Remove this block if AVX-1024 ever comes out
-				// destination vector can't be wider than 512 bits
-
-				signal_error(Error::operand);
-			}
-		}
-
-		length += vex_size;
+		decode_vex(buffer);
 	}
 	else
 	{
@@ -391,6 +314,132 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 			flags = op::rm;
 			break;
 		}
+	}
+}
+
+void Inst_x86::decode_vex(const std::string& buffer)
+{
+	has_vex = true;
+
+	if (has_prefix())
+		signal_error(Error::opcode);
+
+	uint8_t byte_0 = buffer.at(ip + length);
+
+	if (byte_0 == 0xc5)
+	{
+		vex_size = 2;
+
+		uint8_t byte_1 = buffer.at(ip + length+1);
+
+		vex_l = (byte_1 & 0x04) ? 1 : 0;
+		// determine destination register from vvvv
+		vex_reg = (~byte_1 >> 3) & 0x0f;
+
+		opcode[0] = 0x0f;
+
+		// read prefix bytes from pp field
+		vex_decode_pp(byte_1 & 0x03);
+	}
+	else if (byte_0 == 0xc4)
+	{
+		vex_size = 3;
+
+		uint8_t byte_1 = buffer.at(ip + length+1);
+		uint8_t byte_2 = buffer.at(ip + length+2);
+
+		// 3 byte VEX stores REX bits inverted in 2nd byte
+		vex_l = (byte_2 & 0x04) ? 1 : 0;
+		// determine destination register from vvvv
+		vex_reg = (~byte_2 >> 3) & 0x0f;
+
+		// read opcode bytes from mm field
+		vex_decode_mm(byte_1 & 0x1f);
+
+		// read prefix bytes from pp field
+		vex_decode_pp(byte_2 & 0x03);
+	}
+	else if (byte_0 == 0x62)
+	{
+		// this is a 4 byte VEX aka EVEX
+
+		vex_size = 4;
+
+		uint8_t byte_1 = buffer.at(ip + length+1);
+		uint8_t byte_2 = buffer.at(ip + length+2);
+		uint8_t byte_3 = buffer.at(ip + length+3);
+
+		vex_decode_mm(byte_1 & 0x03);
+
+		// determine destination register from vvvv
+		vex_reg = ((~byte_2 >> 3) & 0x0f) | ((byte_3 & 0x80) ? 0x10 : 0);
+
+		vex_decode_pp(byte_2 & 0x03);
+
+		vex_l = (byte_3 >> 5) & 0x03;
+		vex_zero = (byte_3 & 0x80) ? true : false;
+		vex_sae = (byte_3 & 0x10) ? true : false;
+
+		vex_opmask = byte_3 & 0x07;
+
+		if (vex_rc) // aka vex_sae
+		{
+			// rounding control, implies vector is 512 bits wide
+
+			vex_round_to = static_cast<VEX_rm>(vex_l);
+			vex_l = 0x02;
+		}
+		else if (vex_l == 0x03)
+		{
+			// TODO: Remove this block if AVX-1024 ever comes out
+			// destination vector can't be wider than 512 bits
+
+			signal_error(Error::operand);
+		}
+	}
+
+	length += vex_size;
+}
+
+void Inst_x86::vex_decode_pp(uint8_t pp)
+{
+	switch (pp)
+	{
+	case 0x01:
+		prefixes[2] = Prefix::p66;
+		break;
+
+	case 0x02:
+		prefixes[0] = Prefix::repz;
+		break;
+
+	case 0x03:
+		prefixes[0] = Prefix::repnz;
+		break;
+	}
+}
+
+void Inst_x86::vex_decode_mm(uint8_t mm)
+{
+	switch (mm)
+	{
+	case 0x01:
+		opcode[0] = 0x0f;
+		break;
+
+	case 0x02:
+		opcode[0] = 0x0f;
+		opcode[1] = 0x38;
+		break;
+
+	case 0x03:
+		opcode[0] = 0x0f;
+		opcode[1] = 0x3a;
+		break;
+
+	default:
+		signal_error(Error::opcode);
+		break;
 	}
 }
 
@@ -588,47 +637,5 @@ void Inst_x86::read_imm(const std::string& buffer)
 
 		rel_abs = static_cast<uint32_t>(ip) + length + rel;
 		has_rel = true;
-	}
-}
-
-void Inst_x86::vex_decode_pp(uint8_t pp)
-{
-	switch (pp)
-	{
-	case 0x01:
-		prefixes[2] = Prefix::p66;
-		break;
-
-	case 0x02:
-		prefixes[0] = Prefix::repz;
-		break;
-
-	case 0x03:
-		prefixes[0] = Prefix::repnz;
-		break;
-	}
-}
-
-void Inst_x86::vex_decode_mm(uint8_t mm)
-{
-	switch (mm)
-	{
-	case 0x01:
-		opcode[0] = 0x0f;
-		break;
-
-	case 0x02:
-		opcode[0] = 0x0f;
-		opcode[1] = 0x38;
-		break;
-
-	case 0x03:
-		opcode[0] = 0x0f;
-		opcode[1] = 0x3a;
-		break;
-
-	default:
-		signal_error(Error::opcode);
-		break;
 	}
 }
