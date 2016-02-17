@@ -396,7 +396,8 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 
 void Inst_x86::decode_modrm(const std::string& buffer)
 {
-	uint8_t modrm_byte = buffer.at(ip + length++);
+	uint8_t modrm_byte = buffer.at(ip + length);
+	length += 1;
 
 	has_modrm = true;
 	modrm_mod = static_cast<RM_mode>((modrm_byte >> 6) & 0x03);
@@ -460,7 +461,8 @@ void Inst_x86::decode_modrm(const std::string& buffer)
 
 void Inst_x86::decode_sib(const std::string& buffer)
 {
-	uint8_t sib_byte = buffer.at(ip + length++);
+	uint8_t sib_byte = buffer.at(ip + length);
+	length += 1;
 
 	sib_scale = 1 << ((sib_byte >> 6) & 0x03);
 	sib_index = (sib_byte >> 3) & 0x07;
