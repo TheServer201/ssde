@@ -2,6 +2,7 @@
 #pragma once
 #include <string>
 #include <stdexcept>
+#include <array>
 #include <stdint.h>
 
 
@@ -131,7 +132,7 @@ public:
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register, for load instructions only
 
 	int32_t opcode_length = 0;
-	uint8_t opcode[3] = {0};
+	std::array<uint8_t, 3> opcode = {0};
 
 	bool    has_modrm = false;
 	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode
