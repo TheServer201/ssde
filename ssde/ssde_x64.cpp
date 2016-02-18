@@ -264,23 +264,23 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	{
 		opcode[0] = buffer.at(ip + length);
 
-		if (opcode[0] == 0x0f)
+		if (opcode[0] != 0x0f)
+		{
+			length += 1;
+		}
+		else
 		{
 			opcode[1] = buffer.at(ip + length+1);
 
-			if (opcode[1] == 0x38 || opcode[1] == 0x3a)
+			if (opcode[1] != 0x38 && opcode[1] != 0x3a)
+			{
+				length += 2;
+			}
+			else
 			{
 				opcode[2] = buffer.at(ip + length+2);
 				length += 3;
 			}
-			else
-			{
-				length += 2;
-			}
-		}
-		else
-		{
-			length += 1;
 		}
 	}
 
@@ -324,15 +324,16 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	// opcodes.
 	if (opcode[0] == 0xf6 || opcode[0] == 0xf7)
 	{
-		switch ((static_cast<uint8_t>(buffer.at(ip + length)) >> 3) & 0x07)
+		uint8_t modrm_byte = buffer.at(ip + length);
+
+		switch ((modrm_byte >> 3) & 0x07)
 		{
 		case 0x00:
 		case 0x01:
 			{
 				if (opcode[0] == 0xf6)
 					flags = op::ex | op::i8;
-
-				if (opcode[0] == 0xf7)
+				else if (opcode[0] == 0xf7)
 					flags = op::ex | op::rw | op::i32;
 			}
 			break;
@@ -558,6 +559,31 @@ void Inst_x64::decode_sib(const std::string& buffer)
 	sib_base = sib_byte & 0x07;
 }
 
+void Inst_x64::rex_extend_modrm()
+{
+	if (has_sib)
+	{
+		modrm_reg |= rex_r ? 0x08 : 0;
+
+		sib_index |= rex_x ? 0x08 : 0;
+		sib_base  |= rex_b ? 0x08 : 0;
+	}
+	else
+	{
+		if (flags & op::ox)
+		{
+			// Mod extended opcodes are extended differently
+
+			modrm_reg |= rex_b ? 0x08 : 0;
+		}
+		else
+		{
+			modrm_reg |= rex_r ? 0x08 : 0;
+			modrm_rm  |= rex_b ? 0x08 : 0;
+		}
+	}
+}
+
 void Inst_x64::read_disp(const std::string& buffer)
 {
 	disp = 0;
@@ -677,30 +703,5 @@ void Inst_x64::read_imm(const std::string& buffer)
 
 		rel_abs = static_cast<uint64_t>(ip) + length + rel;
 		has_rel = true;
-	}
-}
-
-void Inst_x64::rex_extend_modrm()
-{
-	if (has_sib)
-	{
-		modrm_reg |= rex_r ? 0x08 : 0;
-
-		sib_index |= rex_x ? 0x08 : 0;
-		sib_base  |= rex_b ? 0x08 : 0;
-	}
-	else
-	{
-		if (flags & op::ox)
-		{
-			// Mod extended opcodes are extended differently
-
-			modrm_reg |= rex_b ? 0x08 : 0;
-		}
-		else
-		{
-			modrm_reg |= rex_r ? 0x08 : 0;
-			modrm_rm  |= rex_b ? 0x08 : 0;
-		}
 	}
 }

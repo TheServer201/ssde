@@ -237,23 +237,23 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 	{
 		opcode[0] = buffer.at(ip + length);
 
-		if (opcode[0] == 0x0f)
+		if (opcode[0] != 0x0f)
+		{
+			length += 1;
+		}
+		else
 		{
 			opcode[1] = buffer.at(ip + length+1);
 
-			if (opcode[1] == 0x38 || opcode[1] == 0x3a)
+			if (opcode[1] != 0x38 && opcode[1] != 0x3a)
+			{
+				length += 2;
+			}
+			else
 			{
 				opcode[2] = buffer.at(ip + length+2);
 				length += 3;
 			}
-			else
-			{
-				length += 2;
-			}
-		}
-		else
-		{
-			length += 1;
 		}
 	}
 
@@ -297,15 +297,16 @@ void Inst_x86::decode_opcode(const std::string& buffer)
 	// opcodes.
 	if (opcode[0] == 0xf6 || opcode[0] == 0xf7)
 	{
-		switch ((static_cast<uint8_t>(buffer.at(ip + length)) >> 3) & 0x07)
+		uint8_t modrm_byte = buffer.at(ip + length);
+
+		switch ((modrm_byte >> 3) & 0x07)
 		{
 		case 0x00:
 		case 0x01:
 			{
 				if (opcode[0] == 0xf6)
 					flags = op::rm | op::i8;
-
-				if (opcode[0] == 0xf7)
+				else if (opcode[0] == 0xf7)
 					flags = op::rm | op::i32;
 			}
 			break;
