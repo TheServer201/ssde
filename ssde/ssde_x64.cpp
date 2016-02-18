@@ -1,7 +1,7 @@
 // SSDE implementation for X64 arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #include "ssde_x64.hpp"
-#include <string>
+#include <vector>
 #include <stdint.h>
 
 
@@ -132,7 +132,7 @@ static const uint16_t table_3a[256] =
 } // namespace op
 
 
-void Inst_x64::internal_decode(const std::string& buffer)
+void Inst_x64::internal_decode(const std::vector<uint8_t>& buffer)
 {
 	decode_prefixes(buffer);
 	decode_opcode(buffer);
@@ -181,7 +181,7 @@ void Inst_x64::internal_decode(const std::string& buffer)
 	}
 }
 
-void Inst_x64::decode_prefixes(const std::string& buffer)
+void Inst_x64::decode_prefixes(const std::vector<uint8_t>& buffer)
 {
 	// This is prefix analyzer. It behaves exactly the same way real CPUs
 	// analyze instructions for prefixes. Normally, each instruction is
@@ -248,7 +248,7 @@ void Inst_x64::decode_prefixes(const std::string& buffer)
 	}
 }
 
-void Inst_x64::decode_opcode(const std::string& buffer)
+void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 {
 	uint8_t byte_0 = buffer.at(ip + length);
 
@@ -324,9 +324,7 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	// opcodes.
 	if (opcode[0] == 0xf6 || opcode[0] == 0xf7)
 	{
-		uint8_t modrm_byte = buffer.at(ip + length);
-
-		switch ((modrm_byte >> 3) & 0x07)
+		switch ((buffer.at(ip + length) >> 3) & 0x07)
 		{
 		case 0x00:
 		case 0x01:
@@ -345,7 +343,7 @@ void Inst_x64::decode_opcode(const std::string& buffer)
 	}
 }
 
-void Inst_x64::decode_vex(const std::string& buffer)
+void Inst_x64::decode_vex(const std::vector<uint8_t>& buffer)
 {
 	has_vex = true;
 
@@ -484,7 +482,7 @@ void Inst_x64::vex_decode_mm(uint8_t mm)
 	}
 }
 
-void Inst_x64::decode_modrm(const std::string& buffer)
+void Inst_x64::decode_modrm(const std::vector<uint8_t>& buffer)
 {
 	uint8_t modrm_byte = buffer.at(ip + length);
 	length += 1;
@@ -549,7 +547,7 @@ void Inst_x64::decode_modrm(const std::string& buffer)
 	}
 }
 
-void Inst_x64::decode_sib(const std::string& buffer)
+void Inst_x64::decode_sib(const std::vector<uint8_t>& buffer)
 {
 	uint8_t sib_byte = buffer.at(ip + length);
 	length += 1;
@@ -584,7 +582,7 @@ void Inst_x64::rex_extend_modrm()
 	}
 }
 
-void Inst_x64::read_disp(const std::string& buffer)
+void Inst_x64::read_disp(const std::vector<uint8_t>& buffer)
 {
 	disp = 0;
 
@@ -611,7 +609,7 @@ void Inst_x64::read_disp(const std::string& buffer)
 	}
 }
 
-void Inst_x64::read_imm(const std::string& buffer)
+void Inst_x64::read_imm(const std::vector<uint8_t>& buffer)
 {
 	if (flags & op::am)
 	{

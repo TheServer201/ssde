@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
-#include <string>
+#include <vector>
 #include <stdexcept>
 #include <stdint.h>
 
@@ -53,7 +53,7 @@ public:
 
 	Inst_ARM() = default;
 
-	Inst_ARM(const std::string& buffer, size_t start_pc = 0) :
+	Inst_ARM(const std::vector<uint8_t>& buffer, size_t start_pc = 0) :
 		pc(start_pc)
 	{
 		try
@@ -106,7 +106,7 @@ public:
 	uint32_t swi_data = 0;
 
 private:
-	void internal_decode(const std::string&);
+	void internal_decode(const std::vector<uint8_t>&);
 
 	void signal_error(Error signal)
 	{

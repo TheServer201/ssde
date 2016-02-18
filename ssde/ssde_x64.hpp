@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
-#include <string>
+#include <vector>
 #include <stdexcept>
 #include <array>
 #include <stdint.h>
@@ -66,7 +66,7 @@ public:
 	
 	Inst_x64() = default;
 
-	Inst_x64(const std::string& buffer, size_t start_ip = 0) :
+	Inst_x64(const std::vector<uint8_t>& buffer, size_t start_ip = 0) :
 		ip(start_ip)
 	{
 		try
@@ -161,17 +161,17 @@ public:
 	uint64_t rel_abs = 0; // Absolute address for destination
 
 private:
-	void internal_decode(const std::string&);
-	void decode_prefixes(const std::string&);
-	void decode_opcode(const std::string&);
-	void decode_vex(const std::string&);
+	void internal_decode(const std::vector<uint8_t>&);
+	void decode_prefixes(const std::vector<uint8_t>&);
+	void decode_opcode(const std::vector<uint8_t>&);
+	void decode_vex(const std::vector<uint8_t>&);
 	void vex_decode_pp(uint8_t pp);
 	void vex_decode_mm(uint8_t mm);
-	void decode_modrm(const std::string&);
-	void decode_sib(const std::string&);
+	void decode_modrm(const std::vector<uint8_t>&);
+	void decode_sib(const std::vector<uint8_t>&);
 	void rex_extend_modrm();
-	void read_disp(const std::string&);
-	void read_imm(const std::string&);
+	void read_disp(const std::vector<uint8_t>&);
+	void read_imm(const std::vector<uint8_t>&);
 
 	void signal_error(Error signal)
 	{
