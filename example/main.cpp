@@ -4,7 +4,7 @@
 #include "../ssde/ssde_arm.hpp"
 #include <iostream>
 #include <iomanip>
-#include <string>
+#include <vector>
 
 
 int main(int argc, const char* argv[])
@@ -15,32 +15,35 @@ int main(int argc, const char* argv[])
 	ios::sync_with_stdio(false);
 
 
-	const string bc_x86 {"\x55"
-	                     "\x31\xd2"
-	                     "\x89\xe5"
-	                     "\x8b\x45\x08"
-	                     "\x56"
-	                     "\x8b\x75\x0c"
-	                     "\x53"
-	                     "\x8d\x58\xff"
-	                     "\x0f\xb6\x0c\x16"
-	                     "\x88\x4c\x13\x01"
-	                     "\x83\xc2\x01"
-	                     "\x84\xc9"
-	                     "\x75\xf1"
-	                     "\x5b"
-	                     "\x5e"
-	                     "\x5d"
-	                     "\xc3"};
-
-	for (size_t i = 0; i < bc_x86.length(); 0)
+	const vector<uint8_t> bc
 	{
-		ssde::Inst_x86 inst {bc_x86, i};
+		0x55,                   // push  ebp
+		0x31, 0xd2,             // xor   edx, edx
+		0x89, 0xe5,             // mov   ebp, esp
+		0x8b, 0x45, 0x08,       // mov   eax, [ebp+0x8]
+		0x56,                   // push  esi
+		0x8b, 0x75, 0x0c,       // mov   esi, [ebp+0xc]
+		0x53,                   // push  ebx
+		0x8d, 0x58, 0xff,       // lea   ebx, [eax-0x1]
+		0x0f, 0xb6, 0x0c, 0x16, // movzx ecx, byte ptr [esi+edx] <- loop
+		0x88, 0x4c, 0x13, 0x01, // mov   [ebx+edx+0x1], cl             ^
+		0x83, 0xc2, 0x01,       // add   edx, 0x1                      |
+		0x84, 0xc9,             // test  cl, cl                        |
+		0x75, 0xf1,             // jne   loop --------------------------
+		0x5b,                   // pop   ebx
+		0x5e,                   // pop   esi
+		0x5d,                   // pop   ebp
+		0xc3,                   // ret
+	};
+
+	for (size_t i = 0; i < bc.size(); 0)
+	{
+		ssde::Inst_x86 inst {bc, i};
 
 		cout << setfill('0') << setw(8) << hex << inst.ip << ": ";
 
 		for (int32_t j = 0; j < inst.length; ++j)
-			cout << setfill('0') << setw(2) << hex << (static_cast<int32_t>(bc_x86[i+j]) & 0xff);
+			cout << setfill('0') << setw(2) << hex << (static_cast<int32_t>(bc.at(i+j)) & 0xff);
 
 		if (inst.has_rel)
 			cout << " # -> " << setfill('0') << setw(8) << hex << inst.rel_abs;
