@@ -66,8 +66,8 @@ public:
 	
 	Inst_x64() = default;
 
-	Inst_x64(const std::vector<uint8_t>& buffer, size_t start_ip = 0) :
-		ip(start_ip)
+	Inst_x64(const std::vector<uint8_t>& buffer, size_t s_ip = 0) :
+		ip(s_ip)
 	{
 		try
 		{
@@ -144,9 +144,9 @@ public:
 	uint8_t sib_index = 0;
 	uint8_t sib_base = 0;
 
-	bool     has_disp = false;
-	int32_t  disp_size = 0;
-	uint32_t disp = 0;
+	bool    has_disp = false;
+	int32_t disp_size = 0;
+	int32_t disp = 0;
 
 	bool     has_imm = false;
 	bool     has_imm2 = false;
@@ -155,10 +155,10 @@ public:
 	uint64_t imm = 0;
 	uint64_t imm2 = 0;
 
-	bool     has_rel = false;
-	int32_t  rel_size = 0;
-	int32_t  rel = 0;
-	uint64_t rel_abs = 0; // Absolute address for destination
+	bool    has_rel = false;
+	int32_t rel_size = 0;
+	int32_t rel = 0;
+	size_t  rel_abs = 0; // Absolute address for destination
 
 private:
 	void internal_decode(const std::vector<uint8_t>&);

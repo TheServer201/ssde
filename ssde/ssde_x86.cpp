@@ -185,9 +185,12 @@ void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
 	// meets if there was a prefix from the same group before it.
 	// Instruction decoders can only handle words up to 15 bytes long,
 	// if the word is longer than that, decoder will fail.
-	for (int32_t i = 0; i < 15; ++i, ++length)
+
+	int32_t i = 0;
+
+	for (0; i < 15; ++i)
 	{
-		Prefix pref = static_cast<Prefix>(buffer.at(ip + length));
+		Prefix pref = static_cast<Prefix>(buffer.at(ip + length+i));
 
 		if (pref == Prefix::lock ||
 		    pref == Prefix::repnz ||
@@ -218,6 +221,8 @@ void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
 			break;
 		}
 	}
+
+	length += i;
 }
 
 void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
@@ -522,7 +527,7 @@ void Inst_x86::read_disp(const std::vector<uint8_t>& buffer)
 	disp = 0;
 
 	for (int32_t i = 0; i < disp_size; ++i)
-		disp |= buffer.at(ip + length+i) << i*8;
+		disp |= static_cast<int32_t>(buffer.at(ip + length+i)) << i*8;
 
 	length += disp_size;
 
@@ -595,7 +600,7 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 		imm = 0;
 
 		for (int32_t i = 0; i < imm_size; ++i)
-			imm |= buffer.at(ip + length+i) << i*8;
+			imm |= static_cast<uint32_t>(buffer.at(ip + length+i)) << i*8;
 
 		length += imm_size;
 
@@ -604,7 +609,7 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 			imm2 = 0;
 
 			for (int32_t i = 0; i < imm2_size; ++i)
-				imm2 |= buffer.at(ip + length+i) << i*8;
+				imm2 |= static_cast<uint32_t>(buffer.at(ip + length+i)) << i*8;
 
 			length += imm2_size;
 		}
@@ -615,7 +620,7 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 		has_imm = false;
 
 		rel_size = imm_size;
-		rel = imm;
+		rel = static_cast<int32_t>(imm);
 
 		if (rel & (1 << (rel_size*8 - 1)))
 		{
@@ -634,7 +639,7 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 			}
 		}
 
-		rel_abs = static_cast<uint32_t>(ip) + length + rel;
+		rel_abs = ip + length + rel;
 		has_rel = true;
 	}
 }
