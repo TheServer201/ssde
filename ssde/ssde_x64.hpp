@@ -64,11 +64,10 @@ public:
 	};
 
 	
-	Inst_x64() = default;
-
-	Inst_x64(const std::vector<uint8_t>& buffer, size_t s_ip = 0) :
-		ip(s_ip)
+	void decode(const std::vector<uint8_t>& buffer, size_t s_ip = 0)
 	{
+		ip = s_ip;
+
 		try
 		{
 			internal_decode(buffer);

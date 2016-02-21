@@ -63,11 +63,10 @@ public:
 	};
 
 
-	Inst_x86() = default;
-
-	Inst_x86(const std::vector<uint8_t>& buffer, size_t s_ip = 0) :
-		ip(s_ip)
+	void decode(const std::vector<uint8_t>& buffer, size_t s_ip = 0)
 	{
+		ip = s_ip;
+
 		try
 		{
 			internal_decode(buffer);
