@@ -19,6 +19,9 @@
     <ClCompile Include="..\ssde\ssde_x64.cpp">
       <Filter>ssde</Filter>
     </ClCompile>
+    <ClCompile Include="..\ssde\ssde_arm.cpp">
+      <Filter>ssde</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ssde\ssde_arm.hpp">
