@@ -51,14 +51,15 @@ public:
 	};
 
 
-	Inst_ARM() = default;
-
-	Inst_ARM(const std::vector<uint8_t>& buffer, size_t start_pc = 0) :
-		pc(start_pc)
+	void decode(const std::vector<uint8_t>& buffer,
+	            size_t    s_pc = 0,
+	            CPU_state state = CPU_state::arm)
 	{
+		pc = s_pc;
+
 		try
 		{
-			internal_decode(buffer);
+			internal_decode(buffer, state);
 		}
 		catch (const std::out_of_range&)
 		{
@@ -80,40 +81,31 @@ public:
 	size_t  pc = 0;
 	int32_t length = 0;
 
-	// Specifies which state the CPU is in and changes decoder's behaviour
+	// Specifies processor state instruction was/is/will be encoded for
 	CPU_state state = CPU_state::arm;
+	// Specifies condition required to execute instruction
+	Exec_cond cond = Exec_cond::al;
 
-	union
-	{
-		Exec_cond cond = Exec_cond::al;
+	bool    is_branch = false;
+	bool    has_link = false;
+	int32_t rel = 0;
+	size_t  rel_abs = 0;
 
-		struct
-		{
-			uint8_t n : 1; // 'negative'
-			uint8_t z : 1; // 'zero'
-			uint8_t c : 1; // 'carry'
-			uint8_t v : 1; // 'overflow'
-		}
-		cond_bits;
-	};
-
-	bool     is_branch = false;
-	bool     has_link = false;
-	int32_t  rel = 0;
-	uint32_t rel_abs = 0;
-
-	bool     is_swi = false;
-	uint32_t swi_data = 0;
+	bool    is_swi = false;
+	int32_t swi_data = 0;
 
 private:
-	void internal_decode(const std::vector<uint8_t>&);
+	void internal_decode(const std::vector<uint8_t>&, CPU_state);
+	uint32_t fetch(const std::vector<uint8_t>& buffer, int32_t);
+	void decode_as_arm(uint32_t bc);
+	void decode_as_thumb(uint32_t bc);
 
 	void signal_error(Error signal)
 	{
 		error_flags |= static_cast<uint8_t>(signal);
 	}
 
-	uint8_t error_flags = 0;
+	uint8_t  error_flags = 0;
 };
 
 } // namespace ssde
