@@ -497,7 +497,7 @@ void Inst_x86::decode_modrm(const std::vector<uint8_t>& buffer)
 				has_sib = true;
 
 			has_disp = true;
-			disp_size = (prefixes[3] != Prefix::p67) ? 4 : 2;
+			disp_size = prefixes[3] != Prefix::p67 ? 4 : 2;
 		}
 		break;
 
@@ -556,14 +556,14 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 		// address mode instructions use a different prefix
 
 		has_imm = true;
-		imm_size = (prefixes[3] != Prefix::p67) ? 4 : 2;
+		imm_size = prefixes[3] != Prefix::p67 ? 4 : 2;
 	}
 	else
 	{
 		if (flags & op::i32)
 		{
 			has_imm = true;
-			imm_size = (prefixes[2] != Prefix::p66) ? 4 : 2;
+			imm_size = prefixes[2] != Prefix::p66 ? 4 : 2;
 		}
 
 		if (flags & op::i16)
