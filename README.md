@@ -2,9 +2,11 @@
 
 Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 
-SSDE is a small, scalable disassembly engine purposed for analysis of machine
-code and retrieving information on instructions (their length, opcode,
-correctness, etc)
+SSDE is a portable, small, scalable disassembly engine purposed for analysis of
+machine code and retrieving information about instructions (their operands,
+length etc).
+
+More detailed documentation can be found in _doc/manual_en.txt_.
 
 Check _example/_ to see how SSDE can be used.
 
