@@ -329,18 +329,18 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 	// opcodes.
 	if (opcode[0] == 0xf6)
 	{
-		uint8_t modrm_reg = (buffer.at(ip + length) >> 3) & 0x07;
+		uint8_t op_ex = (buffer.at(ip + length) >> 3) & 0x07;
 
-		if (modrm_reg == 0x00 || modrm_reg == 0x01)
+		if (op_ex == 0x00 || op_ex == 0x01)
 			flags = op::rm | op::i8;
 		else
 			flags = op::rm;
 	}
 	else if (opcode[0] == 0xf7)
 	{
-		uint8_t modrm_reg = (buffer.at(ip + length) >> 3) & 0x07;
+		uint8_t op_ex = (buffer.at(ip + length) >> 3) & 0x07;
 
-		if (modrm_reg == 0x00 || modrm_reg == 0x01)
+		if (op_ex == 0x00 || op_ex == 0x01)
 			flags = op::rm | op::i32;
 		else
 			flags = op::rm;
