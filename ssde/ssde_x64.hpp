@@ -110,7 +110,7 @@ public:
 	// 1: Segment (seg_*) prefixes and/or branch hints
 	// 2: Operand size override prefix (p66)
 	// 3: Address size override prefix (p67)
-	Prefix prefixes[4] = {Prefix::none};
+	std::array<Prefix, 4> prefixes = {Prefix::none};
 
 	bool    has_rex = false;
 	uint8_t rex_w = 0;
