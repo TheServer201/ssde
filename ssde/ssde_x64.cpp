@@ -327,24 +327,23 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 	// new flags table for each extended opcode, I decided to put this
 	// little bit of code that is dedicated to these two exceptional
 	// opcodes.
-	if (opcode[0] == 0xf6 || opcode[0] == 0xf7)
+	if (opcode[0] == 0xf6)
 	{
-		switch ((buffer.at(ip + length) >> 3) & 0x07)
-		{
-		case 0x00:
-		case 0x01:
-			{
-				if (opcode[0] == 0xf6)
-					flags = op::ex | op::i8;
-				else if (opcode[0] == 0xf7)
-					flags = op::ex | op::rw | op::i32;
-			}
-			break;
+		uint8_t modrm_reg = (buffer.at(ip + length) >> 3) & 0x07;
 
-		default:
+		if (modrm_reg == 0x00 || modrm_reg == 0x01)
+			flags = op::rm | op::i8;
+		else
 			flags = op::rm;
-			break;
-		}
+	}
+	else if (opcode[0] == 0xf7)
+	{
+		uint8_t modrm_reg = (buffer.at(ip + length) >> 3) & 0x07;
+
+		if (modrm_reg == 0x00 || modrm_reg == 0x01)
+			flags = op::rm | op::i32;
+		else
+			flags = op::rm;
 	}
 }
 
