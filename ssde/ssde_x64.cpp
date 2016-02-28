@@ -264,7 +264,8 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 	{
 		opcode[0] = get_byte(buffer);
 		opcode[1] = opcode[0] == 0x0f ? get_byte(buffer) : 0;
-		opcode[2] = (opcode[1] == 0x38 || opcode[1] == 0x3a) ? get_byte(buffer) : 0;
+		opcode[2] = (opcode[1] == 0x38 || opcode[1] == 0x3a) ?
+		            get_byte(buffer) : 0;
 	}
 
 	if (opcode[0] != 0x0f)
@@ -300,11 +301,12 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 		signal_error(Error::no_vex);
 	}
 
-	// These are two exceptional opcodes that extend using 3 bits of
-	// Mod R/M byte and they lack consistent flags. Instead of creating a
-	// new flags table for each extended opcode, I decided to put this
-	// little bit of code that is dedicated to these two exceptional
-	// opcodes.
+
+	// These are two exceptional opcodes that extend using 3 bits of Mod R/M
+	// byte and they lack consistent flags. Instead of creating a new flags
+	// table for each extended opcode, I decided to put this little bit of code
+	// that is dedicated to these two exceptional opcodes.
+
 	if (opcode[0] == 0xf6)
 	{
 		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
