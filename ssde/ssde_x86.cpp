@@ -128,7 +128,6 @@ static const uint16_t table_3a[256] =
 
 } // namespace op
 
-
 void Inst_x86::internal_decode(const std::vector<uint8_t>& buffer)
 {
 	decode_prefixes(buffer);
@@ -180,17 +179,15 @@ void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
 {
 	// This is prefix analyzer. It behaves exactly the same way real CPUs
 	// analyze instructions for prefixes. Normally, each instruction is
-	// allowed to have up to 4 prefixes from each group. Though, in cases
-	// when instruction has more prefixes, it will ignore any prefix it
-	// meets if there was a prefix from the same group before it.
-	// Instruction decoders can only handle words up to 15 bytes long,
-	// if the word is longer than that, decoder will fail.
+	// allowed to have up to 4 prefixes from each group. Though, in cases when
+	// instruction has more prefixes, it will ignore any prefix it meets if
+	// there was a prefix from the same group before it. Instruction decoders
+	// can only handle words up to 15 bytes long, if the word is longer than
+	// that, decoder will fail.
 
-	int32_t i = 0;
-
-	for (0; i < 15; ++i)
+	for (int32_t i = 0; i < 15; ++i, ++length)
 	{
-		Prefix pref = static_cast<Prefix>(buffer.at(ip + length+i));
+		Prefix pref = static_cast<Prefix>(peek_byte(buffer));
 
 		if (pref == Prefix::lock ||
 		    pref == Prefix::repnz ||
@@ -221,18 +218,16 @@ void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
 			break;
 		}
 	}
-
-	length += i;
 }
 
 void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 {
-	uint8_t byte_0 = buffer.at(ip + length);
+	uint8_t byte_0 = peek_byte(buffer);
 
 	if ((byte_0 == 0xc4 ||
 	     byte_0 == 0xc5 ||
 	     byte_0 == 0x62) &&
-	    (buffer.at(ip + length+1) & 0xc0) == 0xc0)
+	    (peek_byte(buffer, 1) & 0xc0) == 0xc0)
 	{
 		// looks like we've found a VEX prefix
 
@@ -240,26 +235,9 @@ void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 	}
 	else
 	{
-		opcode[0] = buffer.at(ip + length);
-
-		if (opcode[0] != 0x0f)
-		{
-			length += 1;
-		}
-		else
-		{
-			opcode[1] = buffer.at(ip + length+1);
-
-			if (opcode[1] != 0x38 && opcode[1] != 0x3a)
-			{
-				length += 2;
-			}
-			else
-			{
-				opcode[2] = buffer.at(ip + length+2);
-				length += 3;
-			}
-		}
+		opcode[0] = get_byte(buffer);
+		opcode[1] = opcode[0] == 0x0f ? get_byte(buffer) : 0;
+		opcode[2] = (opcode[1] == 0x38 || opcode[1] == 0x3a) ? get_byte(buffer) : 0;
 	}
 
 	if (opcode[0] != 0x0f)
@@ -302,7 +280,7 @@ void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 	// opcodes.
 	if (opcode[0] == 0xf6)
 	{
-		uint8_t op_ex = (buffer.at(ip + length) >> 3) & 0x07;
+		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
 
 		if (op_ex == 0x00 || op_ex == 0x01)
 			flags = op::rm | op::i8;
@@ -311,7 +289,7 @@ void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 	}
 	else if (opcode[0] == 0xf7)
 	{
-		uint8_t op_ex = (buffer.at(ip + length) >> 3) & 0x07;
+		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
 
 		if (op_ex == 0x00 || op_ex == 0x01)
 			flags = op::rm | op::i32;
@@ -327,15 +305,15 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 	if (has_prefix())
 		signal_error(Error::opcode);
 
-	uint8_t byte_0 = buffer.at(ip + length);
+	uint8_t byte_0 = get_byte(buffer);
 
 	if (byte_0 == 0xc5)
 	{
 		vex_size = 2;
 
-		uint8_t byte_1 = buffer.at(ip + length+1);
+		uint8_t byte_1 = get_byte(buffer);
 
-		vex_l = (byte_1 & 0x04) ? 1 : 0;
+		vex_L = (byte_1 & 0x04) ? true : false;
 		// determine destination register from vvvv
 		vex_reg = (~byte_1 >> 3) & 0x0f;
 
@@ -343,16 +321,18 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_1 & 0x03);
+
+		vex_vec_bits = 128;
 	}
 	else if (byte_0 == 0xc4)
 	{
 		vex_size = 3;
 
-		uint8_t byte_1 = buffer.at(ip + length+1);
-		uint8_t byte_2 = buffer.at(ip + length+2);
+		uint8_t byte_1 = get_byte(buffer);
+		uint8_t byte_2 = get_byte(buffer);
 
 		// 3 byte VEX stores REX bits inverted in 2nd byte
-		vex_l = (byte_2 & 0x04) ? 1 : 0;
+		vex_L = (byte_2 & 0x04) ? true : false;
 		// determine destination register from vvvv
 		vex_reg = (~byte_2 >> 3) & 0x0f;
 
@@ -361,16 +341,16 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_2 & 0x03);
+
+		vex_vec_bits = 128;
 	}
 	else if (byte_0 == 0x62)
 	{
-		// this is a 4 byte VEX aka EVEX
-
 		vex_size = 4;
 
-		uint8_t byte_1 = buffer.at(ip + length+1);
-		uint8_t byte_2 = buffer.at(ip + length+2);
-		uint8_t byte_3 = buffer.at(ip + length+3);
+		uint8_t byte_1 = get_byte(buffer);
+		uint8_t byte_2 = get_byte(buffer);
+		uint8_t byte_3 = get_byte(buffer);
 
 		vex_decode_mm(byte_1 & 0x03);
 
@@ -379,9 +359,10 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 
 		vex_decode_pp(byte_2 & 0x03);
 
-		vex_l = (byte_3 >> 5) & 0x03;
+		vex_sae  = (byte_3 & 0x10) ? true : false;
+		vex_L    = (byte_3 & 0x20) ? true : false;
+		vex_LL   = (byte_3 & 0x40) ? true : false;
 		vex_zero = (byte_3 & 0x80) ? true : false;
-		vex_sae = (byte_3 & 0x10) ? true : false;
 
 		vex_opmask = byte_3 & 0x07;
 
@@ -389,19 +370,22 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 		{
 			// rounding control, implies vector is 512 bits wide
 
-			vex_round_to = static_cast<VEX_rm>(vex_l);
-			vex_l = 0x02;
+			vex_round_to = static_cast<VEX_rm>((vex_L ? 0x1 : 0) |
+			                                   (vex_LL ? 0x2 : 0));
+			vex_L = false;
+			vex_LL = true;
 		}
-		else if (vex_l == 0x03)
+		else if (vex_L && vex_LL)
 		{
 			// TODO: Remove this block if AVX-1024 ever comes out
 			// destination vector can't be wider than 512 bits
 
 			signal_error(Error::operand);
 		}
-	}
 
-	length += vex_size;
+		vex_vec_bits = 128 << (vex_L ? 0x1 : 0) | (vex_LL ? 0x2 : 0);
+	}
+	// byte_0 is guaranteed to be one of values in if cascade
 }
 
 void Inst_x86::vex_decode_pp(uint8_t pp)
@@ -448,8 +432,7 @@ void Inst_x86::vex_decode_mm(uint8_t mm)
 
 void Inst_x86::decode_modrm(const std::vector<uint8_t>& buffer)
 {
-	uint8_t modrm_byte = buffer.at(ip + length);
-	length += 1;
+	uint8_t modrm_byte = get_byte(buffer);
 
 	has_modrm = true;
 	modrm_mod = static_cast<RM_mode>((modrm_byte >> 6) & 0x03);
@@ -513,8 +496,7 @@ void Inst_x86::decode_modrm(const std::vector<uint8_t>& buffer)
 
 void Inst_x86::decode_sib(const std::vector<uint8_t>& buffer)
 {
-	uint8_t sib_byte = buffer.at(ip + length);
-	length += 1;
+	uint8_t sib_byte = get_byte(buffer);
 
 	sib_scale = 1 << ((sib_byte >> 6) & 0x03);
 	sib_index = (sib_byte >> 3) & 0x07;
@@ -526,9 +508,7 @@ void Inst_x86::read_disp(const std::vector<uint8_t>& buffer)
 	disp = 0;
 
 	for (int32_t i = 0; i < disp_size; ++i)
-		disp |= static_cast<int32_t>(buffer.at(ip + length+i)) << i*8;
-
-	length += disp_size;
+		disp |= static_cast<int32_t>(get_byte(buffer)) << i*8;
 
 	if (disp & (1 << (disp_size*8 - 1)))
 	{
@@ -599,18 +579,14 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 		imm = 0;
 
 		for (int32_t i = 0; i < imm_size; ++i)
-			imm |= static_cast<uint32_t>(buffer.at(ip + length+i)) << i*8;
-
-		length += imm_size;
+			imm |= static_cast<uint32_t>(get_byte(buffer)) << i*8;
 
 		if (has_imm2)
 		{
 			imm2 = 0;
 
 			for (int32_t i = 0; i < imm2_size; ++i)
-				imm2 |= static_cast<uint32_t>(buffer.at(ip + length+i)) << i*8;
-
-			length += imm2_size;
+				imm2 |= static_cast<uint32_t>(get_byte(buffer)) << i*8;
 		}
 	}
 
@@ -619,7 +595,7 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 		has_imm = false;
 
 		rel_size = imm_size;
-		rel = static_cast<int32_t>(imm);
+		rel = static_cast<int32_t>(imm) + length;
 
 		if (rel & (1 << (rel_size*8 - 1)))
 		{
@@ -638,7 +614,6 @@ void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
 			}
 		}
 
-		rel_abs = ip + length + rel;
 		has_rel = true;
 	}
 }

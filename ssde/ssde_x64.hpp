@@ -8,8 +8,9 @@
 
 namespace ssde
 {
-	
+
 struct Inst_x64
+
 {
 public:
 	enum class Error : uint8_t
@@ -25,7 +26,8 @@ public:
 
 	enum class Prefix : uint8_t // X86 legacy prefix
 	{
-		none = 0,
+		none = 0x00,
+
 
 		seg_cs = 0x2e,
 		seg_ss = 0x36,
@@ -54,7 +56,7 @@ public:
 		trunc = 0x03,
 		none  = (uint8_t)-1
 	};
-	
+
 	enum class RM_mode : uint8_t // Mod R/M addressing mode
 	{
 		mem        = 0x00, // [r]
@@ -63,19 +65,11 @@ public:
 		reg        = 0x03, // r
 	};
 
-	
-	void decode(const std::vector<uint8_t>& buffer, size_t s_ip = 0)
-	{
-		ip = s_ip;
 
-		try
-		{
-			internal_decode(buffer);
-		}
-		catch (const std::out_of_range&)
-		{
-			signal_error(Error::eof);
-		}
+	void decode(const std::vector<uint8_t>& in_buffer, size_t in_pos = 0)
+	{
+		pos = in_pos;
+		internal_decode(in_buffer);
 	}
 
 	bool has_prefix(Prefix pref) const
@@ -87,7 +81,7 @@ public:
 	bool has_prefix() const
 	{
 		return (prefixes[0] != Prefix::none || prefixes[1] != Prefix::none ||
-				prefixes[2] != Prefix::none || prefixes[3] != Prefix::none);
+		        prefixes[2] != Prefix::none || prefixes[3] != Prefix::none);
 	}
 
 	bool has_error(Error signal) const
@@ -101,34 +95,36 @@ public:
 	}
 
 
-	size_t  ip = 0;
 	int32_t length = 0;
 
 	// Instruction's prefixes (grouped)
 	// To check if instruction has prefix, use Inst_x64::has_prefix
+
 	// 0: LOCK, REPNZ and REPZ prefixes and/or FPU op. size modifiers
 	// 1: Segment (seg_*) prefixes and/or branch hints
 	// 2: Operand size override prefix (p66)
 	// 3: Address size override prefix (p67)
 	std::array<Prefix, 4> prefixes = {Prefix::none};
 
-	bool    has_rex = false;
-	uint8_t rex_w = 0;
-	uint8_t rex_r = 0;
-	uint8_t rex_x = 0;
-	uint8_t rex_b = 0;
+	bool has_rex = false;
+	bool rex_W = false;
+	bool rex_R = false;
+	bool rex_X = false;
+	bool rex_B = false;
 
 	bool    has_vex = false;
-	uint8_t vex_l = 0;
-	uint8_t vex_rr = 0;
+	bool    vex_LL = false;
+	bool    vex_L = false;
+	bool    vex_RR = false;
 	bool    vex_zero = false; // Should zero or merge?; z field
-	uint8_t vex_size = 0;
+	int32_t vex_vec_bits = 0;
+	int32_t vex_size = 0;
 	uint8_t vex_reg = 0;
 	uint8_t vex_opmask = 0;
 	VEX_rm  vex_round_to = VEX_rm::none; // EVEX: Rounding mode
 	bool    vex_sae = false; // EVEX: suppress all exceptions
-	bool&   vex_rc = vex_sae; // EVEX: rounding control, MXCSR override, implies SAE
-	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register, for load instructions only
+	bool&   vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
+	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
 	int32_t opcode_length = 0;
 	std::array<uint8_t, 3> opcode = {0};
@@ -152,12 +148,14 @@ public:
 	int32_t  imm_size = 0;
 	int32_t  imm2_size = 0;
 	uint64_t imm = 0;
+
 	uint64_t imm2 = 0;
+
 
 	bool    has_rel = false;
 	int32_t rel_size = 0;
+	// abs = ip + rel
 	int32_t rel = 0;
-	size_t  rel_abs = 0; // Absolute address for destination
 
 private:
 	void internal_decode(const std::vector<uint8_t>&);
@@ -172,13 +170,34 @@ private:
 	void read_disp(const std::vector<uint8_t>&);
 	void read_imm(const std::vector<uint8_t>&);
 
+	uint8_t get_byte(const std::vector<uint8_t>& buffer)
+	{
+		if (pos < buffer.size())
+		{
+			length++;
+			return buffer[pos++];
+		}
+		else
+		{
+			signal_error(Error::eof);
+			return 0;
+		}
+	}
+
+	uint8_t peek_byte(const std::vector<uint8_t>& buffer,
+	                  size_t offset = 0) const
+	{
+		return (pos + offset) < buffer.size() ? buffer[pos + offset] : 0;
+	}
+
 	void signal_error(Error signal)
 	{
 		error_flags |= static_cast<uint8_t>(signal);
 	}
 
+	size_t pos = 0;
 	uint16_t flags = 0;
-	uint8_t  error_flags = 0;
+	uint8_t error_flags = 0;
 };
 
 } // namespace ssde
