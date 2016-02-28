@@ -24,26 +24,22 @@ public:
 
 	enum class Prefix : uint8_t // X86 legacy prefix
 	{
-
-		none = 0x00,
-
-		seg_cs = 0x2e,
-		seg_ss = 0x36,
-		seg_ds = 0x3e,
-		seg_es = 0x26,
-		seg_fs = 0x64,
-		seg_gs = 0x65,
-		lock   = 0xf0,
-		repnz  = 0xf2,
-		repz   = 0xf3,
-		p66    = 0x66,
-		p67    = 0x67,
-
+		none             = 0x00,
+		seg_cs           = 0x2e,
+		seg_ss           = 0x36,
+		seg_ds           = 0x3e,
+		seg_es           = 0x26,
+		seg_fs           = 0x64,
+		seg_gs           = 0x65,
+		lock             = 0xf0,
+		repnz            = 0xf2,
+		repz             = 0xf3,
+		p66              = 0x66,
+		p67              = 0x67,
 		branch_taken     = 0x3e,
 		branch_not_taken = 0x2e,
-
-		fpu_double = 0xf2,
-		fpu_single = 0xf3,
+		fpu_double       = 0xf2,
+		fpu_single       = 0xf3,
 	};
 
 	enum class VEX_rm : uint8_t // EVEX rounding mode
@@ -52,7 +48,8 @@ public:
 		floor = 0x01,
 		ceil  = 0x02,
 		trunc = 0x03,
-		none  = (uint8_t)-1
+		none  = 0xff,
+		mxcsr = 0xff,
 	};
 
 	enum class RM_mode : uint8_t // Mod R/M addressing mode
@@ -114,7 +111,7 @@ public:
 	int32_t vex_size = 0;
 	uint8_t vex_reg = 0;
 	uint8_t vex_opmask = 0;
-	VEX_rm  vex_round_to = VEX_rm::none; // EVEX: Rounding mode
+	VEX_rm  vex_round_to = VEX_rm::mxcsr; // EVEX: Rounding mode
 	bool    vex_sae = false; // EVEX: suppress all exceptions
 	bool&   vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register
