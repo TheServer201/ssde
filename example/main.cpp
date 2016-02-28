@@ -41,13 +41,13 @@ int main(int argc, const char* argv[])
 		ssde::Inst_x86 inst { };
 		inst.decode(bc, i);
 
-		cout << setfill('0') << setw(8) << hex << inst.ip << ": ";
+		cout << setfill('0') << setw(8) << hex << i << ": ";
 
 		for (int32_t j = 0; j < inst.length; ++j)
 			cout << setfill('0') << setw(2) << hex << (static_cast<int32_t>(bc.at(i+j)) & 0xff);
 
 		if (inst.has_rel)
-			cout << " # -> " << setfill('0') << setw(8) << hex << inst.rel_abs;
+			cout << " # -> " << setfill('0') << setw(8) << hex << (static_cast<int32_t>(i) + inst.rel);
 
 		cout << "\n";
 
