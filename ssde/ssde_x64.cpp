@@ -13,7 +13,7 @@
 
 using ssde::Inst_x64;
 
-namespace op
+namespace opcodes
 {
 
 enum : uint16_t
@@ -129,23 +129,23 @@ static const uint16_t table_3a[256] =
 	  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error ,  error , // Fx
 };
 
-} // namespace op
+} // namespace opcodes
 
 void Inst_x64::internal_decode(const std::vector<uint8_t>& buffer)
 {
 	decode_prefixes(buffer);
 	decode_opcode(buffer);
 
-	if (flags != op::error)
+	if (flags != opcodes::error)
 	{
-		if (flags & op::mp && prefixes[2] != Prefix::p66)
+		if ((flags & opcodes::mp) && prefixes[2] != Prefix::p66)
 		{
 			// this instruction lacks mandatory 66 prefix
 
 			signal_error(Error::opcode);
 		}
 
-		if (flags & op::rm)
+		if (flags & opcodes::rm)
 		{
 			decode_modrm(buffer);
 
@@ -271,7 +271,7 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 	if (opcode[0] != 0x0f)
 	{
 		opcode_length = 1;
-		flags = op::table[opcode[0]];
+		flags = opcodes::table[opcode[0]];
 	}
 	else
 	{
@@ -279,22 +279,22 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 		{
 		default:
 			opcode_length = 2;
-			flags = op::table_0f[opcode[1]];
+			flags = opcodes::table_0f[opcode[1]];
 			break;
 
 		case 0x38:
 			opcode_length = 3;
-			flags = op::table_38[opcode[2]];
+			flags = opcodes::table_38[opcode[2]];
 			break;
 
 		case 0x3a:
 			opcode_length = 3;
-			flags = op::table_3a[opcode[2]];
+			flags = opcodes::table_3a[opcode[2]];
 			break;
 		}
 	}
 
-	if (!has_vex && (flags & op::vx))
+	if (!has_vex && (flags & opcodes::vx))
 	{
 		// this instruction can only be VEX-encoded
 
@@ -312,18 +312,18 @@ void Inst_x64::decode_opcode(const std::vector<uint8_t>& buffer)
 		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
 
 		if (op_ex == 0x00 || op_ex == 0x01)
-			flags = op::rm | op::i8;
+			flags = opcodes::rm | opcodes::i8;
 		else
-			flags = op::rm;
+			flags = opcodes::rm;
 	}
 	else if (opcode[0] == 0xf7)
 	{
 		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
 
 		if (op_ex == 0x00 || op_ex == 0x01)
-			flags = op::rm | op::i32;
+			flags = opcodes::rm | opcodes::i32;
 		else
-			flags = op::rm;
+			flags = opcodes::rm;
 	}
 }
 
@@ -426,6 +426,7 @@ void Inst_x64::decode_vex(const std::vector<uint8_t>& buffer)
 
 			signal_error(Error::operand);
 		}
+		// all cases were checked
 
 		vex_vec_bits = 128 << (vex_L ? 0x1 : 0) | (vex_LL ? 0x2 : 0);
 	}
@@ -558,7 +559,7 @@ void Inst_x64::rex_extend_modrm()
 	}
 	else
 	{
-		if (flags & op::ox)
+		if (flags & opcodes::ox)
 		{
 			// Mod extended opcodes are extended differently
 
@@ -599,7 +600,7 @@ void Inst_x64::read_disp(const std::vector<uint8_t>& buffer)
 
 void Inst_x64::read_imm(const std::vector<uint8_t>& buffer)
 {
-	if (flags & op::am)
+	if (flags & opcodes::am)
 	{
 		// address mode instructions use a different prefix
 
@@ -608,14 +609,14 @@ void Inst_x64::read_imm(const std::vector<uint8_t>& buffer)
 	}
 	else
 	{
-		if (flags & op::i32)
+		if (flags & opcodes::i32)
 		{
 			has_imm = true;
-			imm_size = (rex_W && (flags & op::rw)) ? 8 :
+			imm_size = (rex_W && (flags & opcodes::rw)) ? 8 :
 			           prefixes[2] != Prefix::p66 ? 4 : 2;
 		}
 
-		if (flags & op::i16)
+		if (flags & opcodes::i16)
 		{
 			if (has_imm)
 			{
@@ -629,7 +630,7 @@ void Inst_x64::read_imm(const std::vector<uint8_t>& buffer)
 			}
 		}
 
-		if (flags & op::i8)
+		if (flags & opcodes::i8)
 		{
 			if (has_imm)
 			{
@@ -660,7 +661,7 @@ void Inst_x64::read_imm(const std::vector<uint8_t>& buffer)
 		}
 	}
 
-	if (flags & op::rel)
+	if (flags & opcodes::rel)
 	{
 		has_imm = false;
 

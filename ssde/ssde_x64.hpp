@@ -9,7 +9,6 @@ namespace ssde
 {
 
 struct Inst_x64
-
 {
 public:
 	enum class Error : uint8_t
@@ -144,9 +143,7 @@ public:
 	int32_t  imm_size = 0;
 	int32_t  imm2_size = 0;
 	uint64_t imm = 0;
-
 	uint64_t imm2 = 0;
-
 
 	bool    has_rel = false;
 	int32_t rel_size = 0;

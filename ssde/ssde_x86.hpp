@@ -61,7 +61,6 @@ public:
 	};
 
 
-
 	void decode(const std::vector<uint8_t>& buffer, size_t in_pos = 0)
 	{
 		pos = in_pos;
@@ -137,9 +136,7 @@ public:
 	bool     has_imm2 = false;
 	int32_t  imm_size = 0;
 	int32_t  imm2_size = 0;
-
 	uint32_t imm = 0;
-
 	uint32_t imm2 = 0;
 
 	bool    has_rel = false;
@@ -156,7 +153,6 @@ private:
 	void vex_decode_mm(uint8_t mm);
 	void decode_modrm(const std::vector<uint8_t>&);
 	void decode_sib(const std::vector<uint8_t>&);
-
 	void read_disp(const std::vector<uint8_t>&);
 	void read_imm(const std::vector<uint8_t>&);
 
