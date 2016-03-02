@@ -99,7 +99,7 @@ public:
 	// 1: Segment (seg_*) prefixes and/or branch hints
 	// 2: Operand size override prefix (p66)
 	// 3: Address size override prefix (p67)
-	std::array<Prefix, 4> prefixes = {Prefix::none};
+	std::array<Prefix, 4> prefixes{ };
 
 	bool has_rex = false;
 	bool rex_W = false;
@@ -122,7 +122,7 @@ public:
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
 	int32_t opcode_length = 0;
-	std::array<uint8_t, 3> opcode = {0};
+	std::array<uint8_t, 3> opcode{ };
 
 	bool    has_modrm = false;
 	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode

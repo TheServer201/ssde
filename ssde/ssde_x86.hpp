@@ -19,7 +19,6 @@ public:
 		operand = 1 << 3, // Operands don't match instruction's requirements
 		no_vex  = 1 << 4, // Instruction should've been VEX encoded
 		lock    = 1 << 5, // LOCK prefix is not allowed
-
 	};
 
 	enum class Prefix : uint8_t // X86 legacy prefix
@@ -99,7 +98,7 @@ public:
 	// 1: Segment (seg_*) prefixes and/or branch hints
 	// 2: Operand size override prefix (p66)
 	// 3: Address size override prefix (p67)
-	std::array<Prefix, 4> prefixes = {Prefix::none};
+	std::array<Prefix, 4> prefixes{ };
 
 	bool    has_vex = false;
 	bool    vex_LL = false;
@@ -116,7 +115,7 @@ public:
 	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
 	int32_t opcode_length = 0;
-	std::array<uint8_t, 3> opcode = {0};
+	std::array<uint8_t, 3> opcode{ };
 
 	bool    has_modrm = false;
 	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode
