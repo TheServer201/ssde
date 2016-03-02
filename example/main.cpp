@@ -15,7 +15,7 @@ int main(int argc, const char* argv[])
 	ios::sync_with_stdio(false);
 
 
-	const vector<uint8_t> bc
+	const vector<uint8_t> bc =
 	{
 		0x55,                   // push  ebp
 		0x31, 0xd2,             // xor   edx, edx
@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
 
 	for (size_t i = 0; i < bc.size(); 0)
 	{
-		ssde::Inst_x86 inst { };
+		ssde::Inst_x86 inst{ };
 		inst.decode(bc, i);
 
 		cout << setfill('0') << setw(8) << hex << i << ": ";
