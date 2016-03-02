@@ -351,6 +351,7 @@ void Inst_x64::decode_vex(const std::vector<uint8_t>& buffer)
 		vex_reg = (~byte_1 >> 3) & 0x0f;
 
 		opcode[0] = 0x0f;
+		opcode[1] = get_byte(buffer);
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_1 & 0x03);
@@ -375,6 +376,7 @@ void Inst_x64::decode_vex(const std::vector<uint8_t>& buffer)
 
 		// read opcode bytes from mm field
 		vex_decode_mm(byte_1 & 0x1f);
+		opcode[opcode[1] != 0 ? 2 : 1] = get_byte(buffer);
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_2 & 0x03);
@@ -395,6 +397,7 @@ void Inst_x64::decode_vex(const std::vector<uint8_t>& buffer)
 		vex_RR = (byte_1 & 0x10) ? true : false;
 
 		vex_decode_mm(byte_1 & 0x03);
+		opcode[opcode[1] != 0 ? 2 : 1] = get_byte(buffer);
 
 		rex_W = (byte_2 & 0x80) ? true : false;
 
@@ -447,6 +450,9 @@ void Inst_x64::vex_decode_pp(uint8_t pp)
 
 	case 0x03:
 		prefixes[0] = Prefix::repnz;
+		break;
+
+	default:
 		break;
 	}
 }

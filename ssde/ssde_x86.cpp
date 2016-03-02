@@ -224,10 +224,10 @@ void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 {
 	uint8_t byte_0 = peek_byte(buffer);
 
-	if ((byte_0 == 0xc4 ||
+	if ((peek_byte(buffer, 1) & 0xc0) == 0xc0 &&
+	    (byte_0 == 0xc4 ||
 	     byte_0 == 0xc5 ||
-	     byte_0 == 0x62) &&
-	    (peek_byte(buffer, 1) & 0xc0) == 0xc0)
+	     byte_0 == 0x62))
 	{
 		// looks like we've found a VEX prefix
 
@@ -320,6 +320,7 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 		vex_reg = (~byte_1 >> 3) & 0x0f;
 
 		opcode[0] = 0x0f;
+		opcode[1] = get_byte(buffer);
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_1 & 0x03);
@@ -340,6 +341,7 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 
 		// read opcode bytes from mm field
 		vex_decode_mm(byte_1 & 0x1f);
+		opcode[opcode[1] != 0 ? 2 : 1] = get_byte(buffer);
 
 		// read prefix bytes from pp field
 		vex_decode_pp(byte_2 & 0x03);
@@ -355,6 +357,7 @@ void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
 		uint8_t byte_3 = get_byte(buffer);
 
 		vex_decode_mm(byte_1 & 0x03);
+		opcode[opcode[1] != 0 ? 2 : 1] = get_byte(buffer);
 
 		// determine destination register from vvvv
 		vex_reg = ((~byte_2 >> 3) & 0x0f) | ((byte_3 & 0x80) ? 0x10 : 0);
@@ -405,6 +408,9 @@ void Inst_x86::vex_decode_pp(uint8_t pp)
 
 	case 0x03:
 		prefixes[0] = Prefix::repnz;
+		break;
+
+	default:
 		break;
 	}
 }
