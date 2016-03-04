@@ -1,4 +1,4 @@
-// This file is usage demo for SSDE (http://github.com/notnanocat/ssde)
+// This file is usage demo for SSDE (https://github.com/notnanocat/ssde)
 #include <iostream>
 #include <iomanip>
 #include <vector>

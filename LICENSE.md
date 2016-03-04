@@ -1,4 +1,4 @@
-The Small Scalable Disassembler Engine a.k.a. SSDE - http://github.com/notnanocat/ssde
+The Small Scalable Disassembler Engine a.k.a. SSDE - https://github.com/notnanocat/ssde
 
 Copyright (C) 2015-2016, Constantine Shablya. All rights reserved.
 
