@@ -1,10 +1,10 @@
 // This file is usage demo for SSDE (http://github.com/notnanocat/ssde)
-#include "../ssde/ssde_x86.hpp"
-#include "../ssde/ssde_x64.hpp"
-#include "../ssde/ssde_arm.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include "../ssde/ssde_x86.hpp"
+#include "../ssde/ssde_x64.hpp"
+#include "../ssde/ssde_arm.hpp"
 
 
 int main(int argc, const char* argv[])
