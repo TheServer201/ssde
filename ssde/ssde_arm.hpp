@@ -1,7 +1,6 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
 #include <vector>
-#include <stdexcept>
 #include <stdint.h>
 
 
@@ -13,7 +12,7 @@
 namespace ssde
 {
 
-struct Inst_ARM
+class Inst_ARM
 {
 public:
 	enum class Error : uint8_t
@@ -21,13 +20,13 @@ public:
 		eof       = 1 << 0, // Reached end of buffer before finished decoding
 		alignment = 1 << 1, // PC is misaligned
 		cpu_state = 1 << 2, // Unknown CPU state
+		opcode    = 1 << 3, // Badly encoded instruction
 	};
 
 	enum class CPU_state
 	{
 		arm    = 0x00,
 		thumb  = 0x01,
-		thumb2 = 0x02,
 	};
 
 	enum class Exec_cond : uint8_t // ARM's execution condition
@@ -51,20 +50,12 @@ public:
 	};
 
 
-	void decode(const std::vector<uint8_t>& buffer,
-	            size_t    s_pc = 0,
-	            CPU_state state = CPU_state::arm)
+	void decode(const std::vector<uint8_t>& in_buffer,
+	            size_t    in_pos = 0,
+	            CPU_state in_state = CPU_state::arm)
 	{
-		pc = s_pc;
-
-		try
-		{
-			internal_decode(buffer, state);
-		}
-		catch (const std::out_of_range&)
-		{
-			signal_error(Error::eof);
-		}
+		pos = in_pos;
+		internal_decode(in_buffer, in_state);
 	}
 
 	bool has_error(Error signal) const
@@ -78,34 +69,49 @@ public:
 	}
 
 
-	size_t  pc = 0;
 	int32_t length = 0;
 
-	// Specifies processor state instruction was/is/will be encoded for
-	CPU_state state = CPU_state::arm;
-	// Specifies condition required to execute instruction
+	// Specifies condition required to execute the instruction
 	Exec_cond cond = Exec_cond::al;
 
 	bool    is_branch = false;
 	bool    has_link = false;
+	// abs = pos + rel
 	int32_t rel = 0;
-	size_t  rel_abs = 0;
 
 	bool    is_swi = false;
 	int32_t swi_data = 0;
 
 private:
 	void internal_decode(const std::vector<uint8_t>&, CPU_state);
-	uint32_t fetch(const std::vector<uint8_t>& buffer, int32_t);
-	void decode_as_arm(uint32_t bc);
-	void decode_as_thumb(uint32_t bc);
+	void decode_as_arm(uint32_t);
+	// void decode_as_thumb(uint32_t);
+
+	uint32_t fetch(const std::vector<uint8_t>& buffer, size_t amount)
+	{
+		if ((pos + amount) < buffer.size())
+		{
+			uint32_t result = 0;
+
+			for (size_t i = 0; i < amount; ++i)
+				result |= static_cast<uint32_t>(buffer[pos++]) << i*8;
+
+			return result;
+		}
+		else
+		{
+			signal_error(Error::eof);
+			return 0;
+		}
+	}
 
 	void signal_error(Error signal)
 	{
 		error_flags |= static_cast<uint8_t>(signal);
 	}
 
-	uint8_t  error_flags = 0;
+	size_t  pos = 0;
+	uint8_t error_flags = 0;
 };
 
 } // namespace ssde

@@ -7,7 +7,8 @@
 
 using ssde::Inst_ARM;
 
-void Inst_ARM::internal_decode(const std::vector<uint8_t>& buffer, CPU_state state)
+void Inst_ARM::internal_decode(const std::vector<uint8_t>& buffer,
+                               CPU_state state)
 {
 	switch (state)
 	{
@@ -16,10 +17,6 @@ void Inst_ARM::internal_decode(const std::vector<uint8_t>& buffer, CPU_state sta
 		break;
 
 	case CPU_state::thumb:
-		decode_as_thumb(fetch(buffer, 2));
-		break;
-
-	case CPU_state::thumb2:
 		break;
 
 	default:
@@ -28,48 +25,70 @@ void Inst_ARM::internal_decode(const std::vector<uint8_t>& buffer, CPU_state sta
 	}
 }
 
-uint32_t Inst_ARM::fetch(const std::vector<uint8_t>& buffer, int32_t amount)
-{
-	uint32_t result = 0;
-
-	for (int32_t i = 0; i < amount; ++i)
-		result |= static_cast<uint32_t>(buffer.at(pc + i)) << i*8;
-
-	length += amount;
-
-	return result;
-}
-
 void Inst_ARM::decode_as_arm(uint32_t bc)
 {
-
+	if ((bc & 0x0c000000) == 0x00000000)
+	{
+		// Data processing / PSR Transfer
+	}
+	else if ((bc & 0x0fc000f0) == 0x00000090)
+	{
+		// Multiply
+	}
+	else if ((bc & 0x0f8000f0) == 0x00800090)
+	{
+		// Long Multiply (v3M / v4 only)
+	}
+	else if ((bc & 0x0fb00ff0) == 0x01000090)
+	{
+		// Swap
+	}
+	else if ((bc & 0x0c000000) == 0x04000000)
+	{
+		// Load/Store Byte/Word
+	}
+	else if ((bc & 0x0e000000) == 0x08000000)
+	{
+		// Load/Store Multiple
+	}
+	else if ((bc & 0x0e000090) == 0x00000090)
+	{
+		// Halfword transfer: Immediate offset (v4 only)
+	}
+	else if ((bc & 0x0e000f90) == 0x00000090)
+	{
+		// Halfword transfer: Immediate offset (v4 only)
+	}
+	else if ((bc & 0x0e000000) == 0x0a000000)
+	{
+		// Branch
+	}
+	else if ((bc & 0x0ffffff0) == 0x012fff10)
+	{
+		// Branch Exchange
+	}
+	else if ((bc & 0x0e000000) == 0x0c000000)
+	{
+		// Coprocessor data transfer
+	}
+	else if ((bc & 0x0f000010) == 0x0e000000)
+	{
+		// Coprocessor data operation
+	}
+	else if ((bc & 0x0f000010) == 0x0e000010)
+	{
+		// Coprocessor data register transfer
+	}
+	else if ((bc & 0x0f000000) == 0x0f000000)
+	{
+		// Software interrupt
+	}
+	else
+	{
+		signal_error(Error::opcode);
+	}
 }
 
-void Inst_ARM::decode_as_thumb(uint32_t bc)
-{
-
-}
-
-// void Inst_ARM::decode_as_thumb2(const std::vector<uint8_t>& buffer)
+// void Inst_ARM::decode_as_thumb(const std::vector<uint8_t>& buffer)
 // {
-// 	uint32_t bc = fetch(buffer, 2);
-//
-// 	if ((bc & 0xe000) == 0xe000)
-// 	{
-// 		uint8_t op1 = (bc & 0x1800) >> 11;
-// 		uint8_t op2 = (bc & 0x07f0) >> 4;
-//
-// 		if (op1 == 0x00)
-// 		{
-//
-// 		}
-// 		else
-// 		{
-// 			bc |= fetch(buffer, 2) << 16;
-// 		}
-// 	}
-// 	else
-// 	{
-// 		signal_error();
-// 	}
 // }
