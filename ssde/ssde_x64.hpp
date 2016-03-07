@@ -61,10 +61,14 @@ public:
 	};
 
 
-	void decode(const std::vector<uint8_t>& in_buffer, size_t in_pos = 0)
+	Inst_x64()
 	{
-		pos = in_pos;
-		internal_decode(in_buffer);
+	}
+
+	Inst_x64(const std::vector<uint8_t>& buffer, size_t in_pos = 0) :
+		pos(in_pos)
+	{
+		internal_decode(buffer);
 	}
 
 	bool has_prefix(Prefix pref) const

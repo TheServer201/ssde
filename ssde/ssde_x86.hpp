@@ -60,9 +60,13 @@ public:
 	};
 
 
-	void decode(const std::vector<uint8_t>& buffer, size_t in_pos = 0)
+	Inst_x86()
 	{
-		pos = in_pos;
+	}
+
+	Inst_x86(const std::vector<uint8_t>& buffer, size_t in_pos = 0) :
+		pos(in_pos)
+	{
 		internal_decode(buffer);
 	}
 

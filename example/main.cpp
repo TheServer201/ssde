@@ -38,8 +38,7 @@ int main(int argc, const char* argv[])
 
 	for (size_t i = 0; i < bc.size(); 0)
 	{
-		ssde::Inst_x86 inst{ };
-		inst.decode(bc, i);
+		ssde::Inst_x86 inst{bc, i};
 
 		cout << setfill('0') << setw(8) << hex << i << ": ";
 

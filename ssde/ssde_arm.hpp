@@ -50,11 +50,15 @@ public:
 	};
 
 
-	void decode(const std::vector<uint8_t>& in_buffer,
-	            size_t    in_pos = 0,
-	            CPU_state in_state = CPU_state::arm)
+	Inst_ARM()
 	{
-		pos = in_pos;
+	}
+
+	Inst_ARM(const std::vector<uint8_t>& in_buffer,
+	         size_t    in_pos = 0,
+	         CPU_state in_state = CPU_state::arm) :
+		pos(in_pos)
+	{
 		internal_decode(in_buffer, in_state);
 	}
 
