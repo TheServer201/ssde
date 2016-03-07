@@ -8,7 +8,7 @@
 namespace ssde
 {
 
-struct Inst_x64
+class Inst_x64
 {
 public:
 	enum class Error : uint8_t
