@@ -1,8 +1,8 @@
 // SSDE implementation for X86 arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #include "ssde_x86.hpp"
+#include <cstdint>
 #include <vector>
-#include <stdint.h>
 
 
 // Major amounts of information this code was based on were taken from the

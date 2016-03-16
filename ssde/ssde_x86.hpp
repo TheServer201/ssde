@@ -1,8 +1,8 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
+#include <cstdint>
 #include <vector>
 #include <array>
-#include <stdint.h>
 
 
 namespace ssde

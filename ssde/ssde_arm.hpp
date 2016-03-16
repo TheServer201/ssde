@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
 #pragma once
+#include <cstdint>
 #include <vector>
-#include <stdint.h>
 
 
 // Unlike real ARM CPU, SSDE doesn't strongly require you to have PC aligned to
