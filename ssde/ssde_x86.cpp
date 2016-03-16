@@ -12,6 +12,15 @@
 //   http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
 
 using ssde::Inst_x86;
+using std::vector;
+using std::size_t;
+using std::uint8_t;
+using std::uint16_t;
+using std::uint32_t;
+using std::int8_t;
+using std::int16_t;
+using std::int32_t;
+
 
 namespace opcodes
 {
@@ -128,7 +137,7 @@ static const uint16_t table_3a[256] =
 
 } // namespace opcodes
 
-void Inst_x86::internal_decode(const std::vector<uint8_t>& buffer)
+void Inst_x86::internal_decode(const vector<uint8_t>& buffer)
 {
 	decode_prefixes(buffer);
 	decode_opcode(buffer);
@@ -175,7 +184,7 @@ void Inst_x86::internal_decode(const std::vector<uint8_t>& buffer)
 	}
 }
 
-void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
+void Inst_x86::decode_prefixes(const vector<uint8_t>& buffer)
 {
 	// This is prefix analyzer. It behaves exactly the same way real CPUs
 	// analyze instructions for prefixes. Normally, each instruction is
@@ -220,7 +229,7 @@ void Inst_x86::decode_prefixes(const std::vector<uint8_t>& buffer)
 	}
 }
 
-void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
+void Inst_x86::decode_opcode(const vector<uint8_t>& buffer)
 {
 	uint8_t byte_0 = peek_byte(buffer);
 
@@ -300,7 +309,7 @@ void Inst_x86::decode_opcode(const std::vector<uint8_t>& buffer)
 	}
 }
 
-void Inst_x86::decode_vex(const std::vector<uint8_t>& buffer)
+void Inst_x86::decode_vex(const vector<uint8_t>& buffer)
 {
 	has_vex = true;
 
@@ -439,7 +448,7 @@ void Inst_x86::vex_decode_mm(uint8_t mm)
 	}
 }
 
-void Inst_x86::decode_modrm(const std::vector<uint8_t>& buffer)
+void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 {
 	uint8_t modrm_byte = get_byte(buffer);
 
@@ -503,7 +512,7 @@ void Inst_x86::decode_modrm(const std::vector<uint8_t>& buffer)
 	}
 }
 
-void Inst_x86::decode_sib(const std::vector<uint8_t>& buffer)
+void Inst_x86::decode_sib(const vector<uint8_t>& buffer)
 {
 	uint8_t sib_byte = get_byte(buffer);
 
@@ -512,7 +521,7 @@ void Inst_x86::decode_sib(const std::vector<uint8_t>& buffer)
 	sib_base = sib_byte & 0x07;
 }
 
-void Inst_x86::read_disp(const std::vector<uint8_t>& buffer)
+void Inst_x86::read_disp(const vector<uint8_t>& buffer)
 {
 	disp = 0;
 
@@ -537,7 +546,7 @@ void Inst_x86::read_disp(const std::vector<uint8_t>& buffer)
 	}
 }
 
-void Inst_x86::read_imm(const std::vector<uint8_t>& buffer)
+void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 {
 	if (flags & opcodes::am)
 	{

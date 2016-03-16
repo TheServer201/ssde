@@ -15,7 +15,7 @@ namespace ssde
 class Inst_ARM
 {
 public:
-	enum class Error : uint8_t
+	enum class Error : std::uint8_t
 	{
 		eof       = 1 << 0, // Reached end of buffer before finished decoding
 		alignment = 1 << 1, // PC is misaligned
@@ -29,7 +29,7 @@ public:
 		thumb  = 0x01,
 	};
 
-	enum class Exec_cond : uint8_t // ARM's execution condition
+	enum class Exec_cond : std::uint8_t // ARM's execution condition
 	{
 		eq = 0x0,
 		ne = 0x1,
@@ -54,9 +54,9 @@ public:
 	{
 	}
 
-	Inst_ARM(const std::vector<uint8_t>& in_buffer,
-	         size_t    in_pos = 0,
-	         CPU_state in_state = CPU_state::arm) :
+	Inst_ARM(const std::vector<std::uint8_t>& in_buffer,
+	         std::size_t in_pos = 0,
+	         CPU_state   in_state = CPU_state::arm) :
 		pos(in_pos)
 	{
 		internal_decode(in_buffer, in_state);
@@ -64,7 +64,7 @@ public:
 
 	bool has_error(Error signal) const
 	{
-		return (error_flags & static_cast<uint8_t>(signal)) ? true : false;
+		return (error_flags & static_cast<std::uint8_t>(signal)) ? true : false;
 	}
 
 	bool has_error() const
@@ -73,7 +73,7 @@ public:
 	}
 
 
-	int32_t length = 0;
+	std::int32_t length = 0;
 
 	// Specifies condition required to execute the instruction
 	Exec_cond cond = Exec_cond::al;
@@ -81,24 +81,25 @@ public:
 	bool    is_branch = false;
 	bool    has_link = false;
 	// abs = pos + rel
-	int32_t rel = 0;
+	std::int32_t rel = 0;
 
-	bool    is_swi = false;
-	int32_t swi_data = 0;
+	bool is_swi = false;
+	std::int32_t swi_data = 0;
 
 private:
-	void internal_decode(const std::vector<uint8_t>&, CPU_state);
-	void decode_as_arm(uint32_t);
+	void internal_decode(const std::vector<std::uint8_t>&, CPU_state);
+	void decode_as_arm(std::uint32_t);
 	// void decode_as_thumb(uint32_t);
 
-	uint32_t fetch(const std::vector<uint8_t>& buffer, size_t amount)
+	std::uint32_t fetch(const std::vector<std::uint8_t>& buffer,
+	                    std::size_t amount)
 	{
 		if ((pos + amount) < buffer.size())
 		{
-			uint32_t result = 0;
+			std::uint32_t result = 0;
 
 			for (size_t i = 0; i < amount; ++i)
-				result |= static_cast<uint32_t>(buffer[pos++]) << i*8;
+				result |= static_cast<std::uint32_t>(buffer[pos++]) << i*8;
 
 			return result;
 		}
@@ -111,11 +112,11 @@ private:
 
 	void signal_error(Error signal)
 	{
-		error_flags |= static_cast<uint8_t>(signal);
+		error_flags |= static_cast<std::uint8_t>(signal);
 	}
 
-	size_t  pos = 0;
-	uint8_t error_flags = 0;
+	std::size_t  pos = 0;
+	std::uint8_t error_flags = 0;
 };
 
 } // namespace ssde

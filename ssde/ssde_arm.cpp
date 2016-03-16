@@ -6,8 +6,17 @@
 
 
 using ssde::Inst_ARM;
+using std::vector;
+using std::size_t;
+using std::uint8_t;
+using std::uint16_t;
+using std::uint32_t;
+using std::int8_t;
+using std::int16_t;
+using std::int32_t;
 
-void Inst_ARM::internal_decode(const std::vector<uint8_t>& buffer,
+
+void Inst_ARM::internal_decode(const vector<uint8_t>& buffer,
                                CPU_state state)
 {
 	switch (state)

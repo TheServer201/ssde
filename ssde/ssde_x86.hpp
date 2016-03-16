@@ -11,7 +11,7 @@ namespace ssde
 class Inst_x86
 {
 public:
-	enum class Error : uint8_t
+	enum class Error : std::uint8_t
 	{
 		eof     = 1 << 0, // Reached end of buffer before finished decoding
 		length  = 1 << 1, // Instruction is too long
@@ -21,7 +21,7 @@ public:
 		lock    = 1 << 5, // LOCK prefix is not allowed
 	};
 
-	enum class Prefix : uint8_t // X86 legacy prefix
+	enum class Prefix : std::uint8_t // X86 legacy prefix
 	{
 		none             = 0x00,
 		seg_cs           = 0x2e,
@@ -41,7 +41,7 @@ public:
 		fpu_single       = 0xf3,
 	};
 
-	enum class VEX_rm : uint8_t // EVEX rounding mode
+	enum class VEX_rm : std::uint8_t // EVEX rounding mode
 	{
 		near  = 0x00,
 		floor = 0x01,
@@ -51,7 +51,7 @@ public:
 		mxcsr = 0xff,
 	};
 
-	enum class RM_mode : uint8_t // Mod R/M addressing mode
+	enum class RM_mode : std::uint8_t // Mod R/M addressing mode
 	{
 		mem        = 0x00, // [r]
 		mem_disp8  = 0x01, // [r]+disp8
@@ -64,7 +64,7 @@ public:
 	{
 	}
 
-	Inst_x86(const std::vector<uint8_t>& buffer, size_t in_pos = 0) :
+	Inst_x86(const std::vector<std::uint8_t>& buffer, std::size_t in_pos = 0) :
 		pos(in_pos)
 	{
 		internal_decode(buffer);
@@ -84,7 +84,7 @@ public:
 
 	bool has_error(Error signal) const
 	{
-		return (error_flags & static_cast<uint8_t>(signal)) ? true : false;
+		return (error_flags & static_cast<std::uint8_t>(signal)) ? true : false;
 	}
 
 	bool has_error() const
@@ -93,7 +93,7 @@ public:
 	}
 
 
-	int32_t length = 0;
+	std::int32_t length = 0;
 
 	// Instruction's prefixes (grouped)
 
@@ -104,62 +104,62 @@ public:
 	// 3: Address size override prefix (p67)
 	std::array<Prefix, 4> prefixes{ };
 
-	bool    has_vex = false;
-	bool    vex_LL = false;
-	bool    vex_L = false;
+	bool has_vex = false;
+	bool vex_LL = false;
+	bool vex_L = false;
 
-	bool    vex_zero = false; // Should zero or merge?; z field
-	int32_t vex_vec_bits = 0;
-	int32_t vex_size = 0;
-	uint8_t vex_reg = 0;
-	uint8_t vex_opmask = 0;
-	VEX_rm  vex_round_to = VEX_rm::mxcsr; // EVEX: Rounding mode
-	bool    vex_sae = false; // EVEX: suppress all exceptions
-	bool&   vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
-	bool&   vex_broadcast = vex_sae; // EVEX: broadcast element across register
+	bool vex_zero = false; // Should zero or merge?; z field
+	std::int32_t vex_vec_bits = 0;
+	std::int32_t vex_size = 0;
+	std::uint8_t vex_reg = 0;
+	std::uint8_t vex_opmask = 0;
+	VEX_rm vex_round_to = VEX_rm::mxcsr; // EVEX: Rounding mode
+	bool vex_sae = false; // EVEX: suppress all exceptions
+	bool& vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
+	bool& vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
-	int32_t opcode_length = 0;
-	std::array<uint8_t, 3> opcode{ };
+	std::int32_t opcode_length = 0;
+	std::array<std::uint8_t, 3> opcode{ };
 
-	bool    has_modrm = false;
+	bool has_modrm = false;
 	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode
-	uint8_t modrm_reg = 0; // Register number or opcode information
-	uint8_t modrm_rm = 0; // Operand register
+	std::uint8_t modrm_reg = 0; // Register number or opcode information
+	std::uint8_t modrm_rm = 0; // Operand register
 
-	bool    has_sib = false;
-	uint8_t sib_scale = 0;
-	uint8_t sib_index = 0;
-	uint8_t sib_base = 0;
+	bool has_sib = false;
+	std::uint8_t sib_scale = 0;
+	std::uint8_t sib_index = 0;
+	std::uint8_t sib_base = 0;
 
-	bool    has_disp = false;
-	int32_t disp_size = 0;
-	int32_t disp = 0;
+	bool has_disp = false;
+	std::int32_t disp_size = 0;
+	std::int32_t disp = 0;
 
-	bool     has_imm = false;
-	bool     has_imm2 = false;
-	int32_t  imm_size = 0;
-	int32_t  imm2_size = 0;
-	uint32_t imm = 0;
-	uint32_t imm2 = 0;
+	bool has_imm = false;
+	bool has_imm2 = false;
+	std::int32_t  imm_size = 0;
+	std::int32_t  imm2_size = 0;
+	std::uint32_t imm = 0;
+	std::uint32_t imm2 = 0;
 
 	bool    has_rel = false;
-	int32_t rel_size = 0;
+	std::int32_t rel_size = 0;
 	// abs = ip + rel
-	int32_t rel = 0;
+	std::int32_t rel = 0;
 
 private:
-	void internal_decode(const std::vector<uint8_t>&);
-	void decode_prefixes(const std::vector<uint8_t>&);
-	void decode_opcode(const std::vector<uint8_t>&);
-	void decode_vex(const std::vector<uint8_t>&);
-	void vex_decode_pp(uint8_t pp);
-	void vex_decode_mm(uint8_t mm);
-	void decode_modrm(const std::vector<uint8_t>&);
-	void decode_sib(const std::vector<uint8_t>&);
-	void read_disp(const std::vector<uint8_t>&);
-	void read_imm(const std::vector<uint8_t>&);
+	void internal_decode(const std::vector<std::uint8_t>&);
+	void decode_prefixes(const std::vector<std::uint8_t>&);
+	void decode_opcode(const std::vector<std::uint8_t>&);
+	void decode_vex(const std::vector<std::uint8_t>&);
+	void vex_decode_pp(std::uint8_t pp);
+	void vex_decode_mm(std::uint8_t mm);
+	void decode_modrm(const std::vector<std::uint8_t>&);
+	void decode_sib(const std::vector<std::uint8_t>&);
+	void read_disp(const std::vector<std::uint8_t>&);
+	void read_imm(const std::vector<std::uint8_t>&);
 
-	uint8_t get_byte(const std::vector<uint8_t>& buffer)
+	std::uint8_t get_byte(const std::vector<std::uint8_t>& buffer)
 	{
 		if (pos < buffer.size())
 		{
@@ -173,20 +173,20 @@ private:
 		}
 	}
 
-	uint8_t peek_byte(const std::vector<uint8_t>& buffer,
-	                  size_t offset = 0) const
+	std::uint8_t peek_byte(const std::vector<std::uint8_t>& buffer,
+	                       std::size_t offset = 0) const
 	{
 		return (pos + offset) < buffer.size() ? buffer[pos + offset] : 0;
 	}
 
 	void signal_error(Error signal)
 	{
-		error_flags |= static_cast<uint8_t>(signal);
+		error_flags |= static_cast<std::uint8_t>(signal);
 	}
 
-	size_t   pos = 0;
-	uint16_t flags = 0;
-	uint8_t  error_flags = 0;
+	std::size_t pos = 0;
+	std::uint16_t flags = 0;
+	std::uint8_t error_flags = 0;
 };
 
 } // namespace ssde
