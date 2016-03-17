@@ -6,8 +6,6 @@ SSDE is a portable, small, scalable disassembly engine purposed for analysis of
 machine code and retrieving information about instructions (their operands,
 length etc).
 
-More detailed documentation can be found in _doc/manual_en.txt_.
-
 Check _example/_ to see how SSDE can be used.
 
          Supported architectures and extensions
@@ -27,4 +25,5 @@ Check _example/_ to see how SSDE can be used.
 	|                   |                  |       |
 	| Core i3 2350m     | Windows 8.1 x64  | 64 EL |
 	| ARMv6 BCM2835     | Raspbian 7       | 32 EL |
+	| ARMv7 BCM2836     | ArchLinux        | 32 EL |
 	|___________________|__________________|_______|
