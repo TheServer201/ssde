@@ -75,7 +75,7 @@ public:
 	}
 
 
-	std::int32_t length = 0;
+	int length = 0;
 
 	// Specifies condition required to execute the instruction
 	Exec_cond cond = Exec_cond::al;

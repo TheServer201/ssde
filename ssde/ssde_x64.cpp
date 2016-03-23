@@ -199,7 +199,7 @@ void Inst_x64::decode_prefixes(const vector<uint8_t>& buffer)
 	// can only handle words up to 15 bytes long, if the word is longer than
 	// that, decoder will fail.
 
-	for (int32_t i = 0; i < 15; ++i, ++length)
+	for (int i = 0; i < 15; ++i, ++length)
 	{
 		Prefix pref = static_cast<Prefix>(peek_byte(buffer));
 
@@ -592,7 +592,7 @@ void Inst_x64::read_disp(const vector<uint8_t>& buffer)
 {
 	disp = 0;
 
-	for (int32_t i = 0; i < disp_size; ++i)
+	for (int i = 0; i < disp_size; ++i)
 		disp |= static_cast<int32_t>(get_byte(buffer)) << i*8;
 
 	if (disp & (1 << (disp_size*8 - 1)))
@@ -664,14 +664,14 @@ void Inst_x64::read_imm(const vector<uint8_t>& buffer)
 	{
 		imm = 0;
 
-		for (int32_t i = 0; i < imm_size; ++i)
+		for (int i = 0; i < imm_size; ++i)
 			imm |= static_cast<uint64_t>(get_byte(buffer)) << i*8;
 
 		if (has_imm2)
 		{
 			imm2 = 0;
 
-			for (int32_t i = 0; i < imm2_size; ++i)
+			for (int i = 0; i < imm2_size; ++i)
 				imm2 |= static_cast<uint64_t>(get_byte(buffer)) << i*8;
 		}
 	}
