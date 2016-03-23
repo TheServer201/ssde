@@ -3,9 +3,9 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include "../ssde/ssde_x86.hpp"
-#include "../ssde/ssde_x64.hpp"
-#include "../ssde/ssde_arm.hpp"
+#include "../ssde/ssde_x86.h"
+#include "../ssde/ssde_x64.h"
+#include "../ssde/ssde_arm.h"
 
 
 int main(int argc, const char* argv[])

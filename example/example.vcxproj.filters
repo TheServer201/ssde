@@ -24,13 +24,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ssde\ssde_arm.hpp">
+    <ClInclude Include="..\ssde\ssde_arm.h">
       <Filter>ssde</Filter>
     </ClInclude>
-    <ClInclude Include="..\ssde\ssde_x64.hpp">
+    <ClInclude Include="..\ssde\ssde_x64.h">
       <Filter>ssde</Filter>
     </ClInclude>
-    <ClInclude Include="..\ssde\ssde_x86.hpp">
+    <ClInclude Include="..\ssde\ssde_x86.h">
       <Filter>ssde</Filter>
     </ClInclude>
   </ItemGroup>

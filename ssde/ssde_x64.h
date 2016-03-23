@@ -1,5 +1,7 @@
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-#pragma once
+#ifndef SSDE_X64_H
+#define SSDE_X64_H
+
 #include <cstdint>
 #include <vector>
 #include <array>
@@ -199,3 +201,5 @@ private:
 };
 
 } // namespace ssde
+
+#endif // SSDE_X64_H

@@ -1,6 +1,6 @@
 // SSDE implementation for ARM arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-#include "ssde_arm.hpp"
+#include "ssde_arm.h"
 #include <cstdint>
 #include <vector>
 

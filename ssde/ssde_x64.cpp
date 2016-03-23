@@ -1,6 +1,6 @@
 // SSDE implementation for X64 arch
 // Copyright (C) 2015-2016, Constantine Shablya. See Copyright Notice in LICENSE.md
-#include "ssde_x64.hpp"
+#include "ssde_x64.h"
 #include <cstdint>
 #include <vector>
 

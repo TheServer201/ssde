@@ -159,9 +159,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ssde\ssde_arm.hpp" />
-    <ClInclude Include="..\ssde\ssde_x64.hpp" />
-    <ClInclude Include="..\ssde\ssde_x86.hpp" />
+    <ClInclude Include="..\ssde\ssde_arm.h" />
+    <ClInclude Include="..\ssde\ssde_x64.h" />
+    <ClInclude Include="..\ssde\ssde_x86.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
