@@ -23,7 +23,7 @@ public:
 		lock    = 1 << 5, // LOCK prefix is not allowed
 	};
 
-	enum class Prefix : std::uint8_t // X86 legacy prefix
+	enum class Prefix : std::uint8_t // X86 instruction prefix
 	{
 		none             = 0x00,
 		seg_cs           = 0x2e,
@@ -91,11 +91,11 @@ public:
 
 	bool has_error() const
 	{
-		return error_flags != 0 ? true : false;
+		return error_flags != 0;
 	}
 
 
-	int length = 0;
+	std::int32_t length = 0;
 
 	// Instruction's prefixes (grouped)
 
@@ -112,7 +112,7 @@ public:
 
 	bool vex_zero = false; // Should zero or merge?; z field
 	std::int32_t vex_vec_bits = 0;
-	int vex_size = 0;
+	std::int32_t vex_size = 0;
 	std::uint8_t vex_reg = 0;
 	std::uint8_t vex_opmask = 0;
 	VEX_rm vex_round_to = VEX_rm::mxcsr; // EVEX: Rounding mode
@@ -120,7 +120,7 @@ public:
 	bool& vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
 	bool& vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
-	int opcode_length = 0;
+	std::int32_t opcode_length = 0;
 	std::array<std::uint8_t, 3> opcode{ };
 
 	bool has_modrm = false;
@@ -134,18 +134,18 @@ public:
 	std::uint8_t sib_base = 0;
 
 	bool has_disp = false;
-	int  disp_size = 0;
+	std::int32_t  disp_size = 0;
 	std::int32_t disp = 0;
 
 	bool has_imm = false;
 	bool has_imm2 = false;
-	int  imm_size = 0;
-	int  imm2_size = 0;
+	std::int32_t  imm_size = 0;
+	std::int32_t  imm2_size = 0;
 	std::uint32_t imm = 0;
 	std::uint32_t imm2 = 0;
 
 	bool has_rel = false;
-	int  rel_size = 0;
+	std::int32_t rel_size = 0;
 	// abs = ip + rel
 	std::int32_t rel = 0;
 

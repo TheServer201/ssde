@@ -19,7 +19,7 @@ using std::uint16_t;
 using std::uint32_t;
 using std::int8_t;
 using std::int16_t;
-using std::int32_t;
+using int32_t;
 
 
 namespace opcodes
@@ -137,6 +137,7 @@ static const uint16_t table_3a[256] =
 
 } // namespace opcodes
 
+
 void Inst_x86::internal_decode(const vector<uint8_t>& buffer)
 {
 	decode_prefixes(buffer);
@@ -194,7 +195,7 @@ void Inst_x86::decode_prefixes(const vector<uint8_t>& buffer)
 	// can only handle words up to 15 bytes long, if the word is longer than
 	// that, decoder will fail.
 
-	for (int i = 0; i < 15; ++i, ++length)
+	for (int32_t i = 0; i < 15; ++i, ++length)
 	{
 		Prefix pref = static_cast<Prefix>(peek_byte(buffer));
 
@@ -384,9 +385,9 @@ void Inst_x86::decode_vex(const vector<uint8_t>& buffer)
 		{
 			// rounding control, implies vector is 512 bits wide
 
-			vex_round_to = static_cast<VEX_rm>((vex_L ? 0x1 : 0) |
+			vex_round_to = static_cast<VEX_rm>((vex_L  ? 0x1 : 0) |
 			                                   (vex_LL ? 0x2 : 0));
-			vex_L = false;
+			vex_L  = false;
 			vex_LL = true;
 		}
 		else if (vex_L && vex_LL)
@@ -455,7 +456,7 @@ void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 	has_modrm = true;
 	modrm_mod = static_cast<RM_mode>((modrm_byte >> 6) & 0x03);
 	modrm_reg = (modrm_byte >> 3) & 0x07;
-	modrm_rm = modrm_byte & 0x07;
+	modrm_rm  = modrm_byte & 0x07;
 
 	switch (modrm_mod)
 	{
@@ -464,7 +465,7 @@ void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 		{
 			if (modrm_rm == 0x06)
 			{
-				has_disp = true;
+				has_disp  = true;
 				disp_size = 2;
 			}
 		}
@@ -475,7 +476,7 @@ void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 
 			if (modrm_rm == 0x05)
 			{
-				has_disp = true;
+				has_disp  = true;
 				disp_size = 4;
 			}
 		}
@@ -486,7 +487,7 @@ void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 			if (prefixes[3] != Prefix::p67 && modrm_rm == 0x04)
 				has_sib = true;
 
-			has_disp = true;
+			has_disp  = true;
 			disp_size = 1;
 		}
 		break;
@@ -496,7 +497,7 @@ void Inst_x86::decode_modrm(const vector<uint8_t>& buffer)
 			if (prefixes[3] != Prefix::p67 && modrm_rm == 0x04)
 				has_sib = true;
 
-			has_disp = true;
+			has_disp  = true;
 			disp_size = prefixes[3] != Prefix::p67 ? 4 : 2;
 		}
 		break;
@@ -516,19 +517,17 @@ void Inst_x86::decode_sib(const vector<uint8_t>& buffer)
 {
 	uint8_t sib_byte = get_byte(buffer);
 
-	sib_scale = 1 << ((sib_byte >> 6) & 0x03);
+	sib_scale = 1U << ((sib_byte >> 6) & 0x03);
 	sib_index = (sib_byte >> 3) & 0x07;
-	sib_base = sib_byte & 0x07;
+	sib_base  = sib_byte & 0x07;
 }
 
 void Inst_x86::read_disp(const vector<uint8_t>& buffer)
 {
-	disp = 0;
-
-	for (int i = 0; i < disp_size; ++i)
+	for (int32_t i = 0; i < disp_size; ++i)
 		disp |= static_cast<int32_t>(get_byte(buffer)) << i*8;
 
-	if (disp & (1 << (disp_size*8 - 1)))
+	if (disp & (1U << (disp_size*8 - 1)))
 	{
 		switch (disp_size)
 		{
@@ -552,14 +551,14 @@ void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 	{
 		// address mode instructions use a different prefix
 
-		has_imm = true;
+		has_imm  = true;
 		imm_size = prefixes[3] != Prefix::p67 ? 4 : 2;
 	}
 	else
 	{
 		if (flags & opcodes::i32)
 		{
-			has_imm = true;
+			has_imm  = true;
 			imm_size = prefixes[2] != Prefix::p66 ? 4 : 2;
 		}
 
@@ -567,12 +566,12 @@ void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 		{
 			if (has_imm)
 			{
-				has_imm2 = true;
+				has_imm2  = true;
 				imm2_size = 2;
 			}
 			else
 			{
-				has_imm = true;
+				has_imm  = true;
 				imm_size = 2;
 			}
 		}
@@ -581,12 +580,12 @@ void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 		{
 			if (has_imm)
 			{
-				has_imm2 = true;
+				has_imm2  = true;
 				imm2_size = 1;
 			}
 			else
 			{
-				has_imm = true;
+				has_imm  = true;
 				imm_size = 1;
 			}
 		}
@@ -596,14 +595,14 @@ void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 	{
 		imm = 0;
 
-		for (int i = 0; i < imm_size; ++i)
+		for (int32_t i = 0; i < imm_size; ++i)
 			imm |= static_cast<uint32_t>(get_byte(buffer)) << i*8;
 
 		if (has_imm2)
 		{
 			imm2 = 0;
 
-			for (int i = 0; i < imm2_size; ++i)
+			for (int32_t i = 0; i < imm2_size; ++i)
 				imm2 |= static_cast<uint32_t>(get_byte(buffer)) << i*8;
 		}
 	}
@@ -613,9 +612,9 @@ void Inst_x86::read_imm(const vector<uint8_t>& buffer)
 		has_imm = false;
 
 		rel_size = imm_size;
-		rel = static_cast<int32_t>(imm) + length;
+		rel = static_cast<int32_t>(imm) + static_cast<int32_t>(length);
 
-		if (rel & (1 << (rel_size*8 - 1)))
+		if (rel & (1U << (rel_size*8 - 1)))
 		{
 			switch (rel_size)
 			{

@@ -71,11 +71,11 @@ public:
 
 	bool has_error() const
 	{
-		return error_flags != 0 ? true : false;
+		return error_flags != 0;
 	}
 
 
-	int length = 0;
+	std::int32_t length = 0;
 
 	// Specifies condition required to execute the instruction
 	Exec_cond cond = Exec_cond::al;
