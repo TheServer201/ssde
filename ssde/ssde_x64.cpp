@@ -19,7 +19,7 @@ using std::uint16_t;
 using std::uint32_t;
 using std::int8_t;
 using std::int16_t;
-using int32_t;
+using std::int32_t;
 
 
 namespace opcodes
@@ -428,7 +428,7 @@ void Inst_x64::decode_vex(const vector<uint8_t>& buffer)
 
 			vex_round_to = static_cast<VEX_rm>((vex_L ? 0x1 : 0) |
 			                                   (vex_LL ? 0x2 : 0));
-			vex_L = false;
+			vex_L  = false;
 			vex_LL = true;
 		}
 		else if (vex_L && vex_LL)

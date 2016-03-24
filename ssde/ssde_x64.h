@@ -108,52 +108,52 @@ public:
 	std::array<Prefix, 4> prefixes{ };
 
 	bool has_rex = false;
-	bool rex_W = false;
-	bool rex_R = false;
-	bool rex_X = false;
-	bool rex_B = false;
+	bool rex_W   = false;
+	bool rex_R   = false;
+	bool rex_X   = false;
+	bool rex_B   = false;
 
-	bool has_vex = false;
-	bool vex_LL = false;
-	bool vex_L = false;
-	bool vex_RR = false;
+	bool has_vex  = false;
+	bool vex_LL   = false;
+	bool vex_L    = false;
+	bool vex_RR   = false;
 	bool vex_zero = false; // Should zero or merge?; z field
 	std::int32_t vex_vec_bits = 0;
-	std::int32_t vex_size = 0;
-	std::uint8_t vex_reg = 0;
-	std::uint8_t vex_opmask = 0;
+	std::int32_t vex_size     = 0;
+	std::uint8_t vex_reg      = 0;
+	std::uint8_t vex_opmask   = 0;
 
 	VEX_rm vex_round_to = VEX_rm::mxcsr; // EVEX: Rounding mode
 	bool  vex_sae = false; // EVEX: suppress all exceptions
-	bool& vex_rc = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
+	bool& vex_rc  = vex_sae; // EVEX: rounding, MXCSR override, implies SAE
 	bool& vex_broadcast = vex_sae; // EVEX: broadcast element across register
 
 	std::int32_t opcode_length = 0;
 	std::array<std::uint8_t, 3> opcode{ };
 
-	bool has_modrm = false;
+	bool    has_modrm = false;
 	RM_mode modrm_mod = RM_mode::mem; // Mod R/M address mode
 	std::uint8_t modrm_reg = 0; // Register number or opcode information
-	std::uint8_t modrm_rm = 0; // Operand register
+	std::uint8_t modrm_rm  = 0; // Operand register
 
 	bool has_sib = false;
 	std::uint8_t sib_scale = 0;
 	std::uint8_t sib_index = 0;
-	std::uint8_t sib_base = 0;
+	std::uint8_t sib_base  = 0;
 
 	bool has_disp = false;
-	std::int32_t  disp_size = 0;
+	std::int32_t disp_size = 0;
 	std::int32_t disp = 0;
 
-	bool has_imm = false;
+	bool has_imm  = false;
 	bool has_imm2 = false;
-	std::int32_t  imm_size = 0;
+	std::int32_t  imm_size  = 0;
 	std::int32_t  imm2_size = 0;
-	std::uint64_t imm = 0;
+	std::uint64_t imm  = 0;
 	std::uint64_t imm2 = 0;
 
 	bool has_rel = false;
-	std::int32_t  rel_size = 0;
+	std::int32_t rel_size = 0;
 	// abs = ip + rel
 	std::int32_t rel = 0;
 
