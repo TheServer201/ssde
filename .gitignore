@@ -3,6 +3,7 @@ example/Release/*
 example/.vs/*
 .gitattributes
 
+*.vcxproj*
 *.o
 *.iobj
 *.ipdb
