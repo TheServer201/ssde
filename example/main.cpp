@@ -1,4 +1,3 @@
-// This file is usage demo for SSDE (https://github.com/notnanocat/ssde)
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
