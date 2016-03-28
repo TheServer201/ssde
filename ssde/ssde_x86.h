@@ -22,6 +22,7 @@
 #define SSDE_X86_H
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <array>
 

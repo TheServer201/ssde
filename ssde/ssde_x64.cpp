@@ -22,6 +22,7 @@
 // SSDE implementation for X64 arch
 #include "ssde_x64.h"
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 
 

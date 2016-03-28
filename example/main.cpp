@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstddef>
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -36,7 +37,7 @@ int main(int argc, const char* argv[])
 		0xc3,                   // ret
 	};
 
-	for (size_t i = 0; i < bc.size(); 0)
+	for (size_t i = 0; i < bc.size(); )
 	{
 		ssde::Inst_x86 inst{bc, i};
 

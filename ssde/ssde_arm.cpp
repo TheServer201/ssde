@@ -22,6 +22,7 @@
 // SSDE implementation for ARM arch
 #include "ssde_arm.h"
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 
 

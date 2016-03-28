@@ -22,6 +22,7 @@
 #define SSDE_ARM_H
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 
 
