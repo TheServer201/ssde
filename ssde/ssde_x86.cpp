@@ -311,24 +311,19 @@ void Inst_x86::decode_opcode(const vector<uint8_t>& buffer)
 	// table for each extended opcode, I decided to put this little bit of code
 	// that is dedicated to these two exceptional opcodes.
 
-	if (opcode[0] == 0xf6)
-	{
-		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
-
-		if (op_ex == 0x00 || op_ex == 0x01)
+	// http://www.sandpile.org/x86/opc_grp.htm
+	// See xx000xxx and xx001xxx - group #3
+	// Do only test on xx00xxx since opcode[0] = 0xF6 or 0xF7
+	if (opcode[0] == 0xF6)
+		if ((peek_byte(buffer) >> 3) & 0x06)
+			flags = opcodes::rm;
+		else
 			flags = opcodes::rm | opcodes::i8;
-		else
+	else if (opcode[0] == 0xF7)
+		if ((peek_byte(buffer) >> 3) & 0x06)
 			flags = opcodes::rm;
-	}
-	else if (opcode[0] == 0xf7)
-	{
-		uint8_t op_ex = (peek_byte(buffer) >> 3) & 0x07;
-
-		if (op_ex == 0x00 || op_ex == 0x01)
+		else
 			flags = opcodes::rm | opcodes::i32;
-		else
-			flags = opcodes::rm;
-	}
 }
 
 void Inst_x86::decode_vex(const vector<uint8_t>& buffer)
